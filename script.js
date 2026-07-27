@@ -1552,6 +1552,7 @@ const QA = [
     {k:['autonomous','autonomy','own syllabus','own exam','autonomous status','is rvce autonomous'],id:'autonomous',p:1},
     {k:['stat','stats','statistic','statistics','figure','figures','data'],id:'stats_disambiguation',p:0.4},
     {k:['number','numbers','num','contact number','phone number','official number','calling','mobile'],id:'numbers_info',p:2.5},
+    {k:['placement director','placement officer','dean placement','placement dean','head of placement','placement cell head','who is placement director','placement incharge','placement head','director of placement','placement officer name'],id:'placement_director',p:0.5},
     // Department-specific (with short codes + college slang)
     {k:['computer science','cse','cs','cs department','computer science engineering','cse department','comps','comp sci','cs branch','cs dept'],id:'dept_cs',p:1},
     {k:['artificial intelligence','aiml','ai ml','machine learning','ai department','ai branch','ml branch','ai and ml'],id:'dept_aiml',p:1},
@@ -2266,15 +2267,16 @@ function classifyIntent(input) {
     let strippedInput = cleanInput;
     if (typeof SESSION !== 'undefined' && SESSION.lastIntent && SESSION.lastIntent.startsWith('dept_')) {
         const hasTopic = contextualTopics.some(t => cleanInput.includes(t));
-        const hasDeptMention = cleanInput.match(/cse|cs|ec|mech|civil|ai|ml/i);
-        if (hasTopic && !hasDeptMention) {
+        const hasDeptMention = cleanInput.match(/cse|cs|ec|mech|civil|ai|ml|ise|is|eee|ece|bt|ch|cv|ae|ie|eie|ete|mca/i);
+        const hasGlobalRole = cleanInput.match(/director|dean|officer|principal|vice principal|incharge|head of placement/i);
+        if (hasTopic && !hasDeptMention && !hasGlobalRole) {
             const branchCode = SESSION.lastIntent.replace('dept_', '');
             cleanInput += ` ${branchCode}`;
         }
     }
     
-    // Remove common stop words for more robust matching of separated keywords
-    const stopWords = ['the', 'is', 'for', 'a', 'an', 'of', 'in', 'to', 'and', 'with', 'about', 'on', 'at', 'please', 'can', 'you', 'tell', 'me', 'know'];
+    // Remove common stop words for more robust matching of separated keywords (excluding 'is' and 'me' to avoid dept collisions)
+    const stopWords = ['the', 'for', 'a', 'an', 'of', 'in', 'to', 'and', 'with', 'about', 'on', 'at', 'please', 'can', 'you', 'tell', 'know'];
     strippedInput = cleanInput.split(' ').filter(w => !stopWords.includes(w)).join(' ');
 
     // 0. Abbreviation Check
@@ -3079,6 +3081,9 @@ function getResponse(id) {
         r.text += "\n• Max: " + KB.placements.maxSalary + "\n• Avg: " + KB.placements.avgSalary + "\n• " + KB.placements.offers + "\n• " + KB.placements.companies + "\n• Top Recruiters: " + KB.placements.recruiters;
         r.text += T("\n\n🏆 Previous batch (2025): ₹67 LPA highest, 922 offers","\n\nPrevious Year (2025): ₹67 LPA highest package, 262 companies, 922 offers.");
         r.buttons = [{l:'Department-wise Stats',a:'dept_placements_list',i:'📊'}, {l:'Placement Training',u:KB.placements.url,i:'🌐'}]; break;
+    case 'placement_director':
+        r.text += T("👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\n📌 **Role:** Heading the Department of Placement & Training at RVCE.\n🌐 **Official Link:** https://rvce.edu.in/placement_and_training/", "👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\nHeading the Placement & Training department at RVCE.\nLink: https://rvce.edu.in/placement_and_training/");
+        r.buttons = [{l:'Placement Stats 💼',a:'placements',i:'💼'},{l:'Faculty & Deans 👨‍🏫',a:'deans_list',i:'👨‍🏫'}]; break;
     case 'top_companies':
         r.text += T("RVCE attracts the best in the industry! 🏢 Here are some of our top recruiters:","Top Recruiting Companies at RVCE:");
         r.text += "\n\n• " + KB.placements.recruiters.split(", ").join("\n• ");
