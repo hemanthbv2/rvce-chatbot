@@ -1449,14 +1449,14 @@ function sanitize(input) {
     // 2. Remove other special chars but keep underscores and hyphens (vital for years like 2024-25)
     cleaned = cleaned.replace(/[^a-zA-Z0-9_\-\s]/g, ' ').toLowerCase();
     
-    // 3. Expand common department abbreviations
+    // 3. Expand common department abbreviations (excluding common English verbs/words like 'is' or 'me')
     const deptAbbr = {
         'cs': 'cse', 'cse': 'cse',
         'ec': 'ece', 'ece': 'ece',
-        'me': 'mechanical', 'mech': 'mechanical',
+        'mech': 'mechanical',
         'cv': 'civil',
         'ee': 'eee', 'eee': 'eee',
-        'is': 'ise', 'ise': 'ise',
+        'ise': 'ise',
         'ae': 'aerospace', 'aero': 'aerospace',
         'ch': 'chemical', 'chem': 'chemical',
         'bt': 'biotech', 'biotech': 'biotechnology',
@@ -3957,7 +3957,7 @@ micB.addEventListener('click', () => {
 
 /* =============== TELEMETRY & QUEUE =============== */
 /* =============== TELEMETRY & QUEUE =============== */
-const currentSessionId = (function() {
+var currentSessionId = (function() {
     let sid = sessionStorage.getItem('rvce_sid');
     if (!sid) {
         sid = 'sid_' + Math.random().toString(36).substr(2, 9);
