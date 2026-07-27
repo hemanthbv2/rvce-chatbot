@@ -5,6 +5,35 @@ function startRVCEChatbot() {
 let tone = 'pro';
 let chatOpen = false;
 
+/* =============== NLP TOKENIZER & PROCESSOR =============== */
+const STOP_WORDS = new Set([
+    "what", "is", "the", "a", "an", "can", "you", "tell", "me", "about",
+    "show", "give", "i", "want", "to", "know", "how", "do", "does", "are",
+    "of", "in", "on", "at", "for", "with", "and", "or", "but", "so", "because",
+    "please", "hi", "hello", "hey", "sir", "madam", "could", "would", "should"
+]);
+
+function tokenize(text) {
+    if (!text) return [];
+    return text.toLowerCase()
+               .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'\[\]]/g, ' ')
+               .split(/\s+/)
+               .filter(word => word.trim().length > 0);
+}
+
+function removeStopWords(tokens) {
+    return tokens.filter(word => !STOP_WORDS.has(word));
+}
+
+function processNLPInput(input) {
+    const tokens = tokenize(input);
+    const cleanTokens = removeStopWords(tokens);
+    return {
+        tokens: cleanTokens,
+        cleanString: cleanTokens.join(' ')
+    };
+}
+
 /* =============== CONTENT MODERATION =============== */
 const BLOCKED = {
     abusive: [
@@ -2202,6 +2231,11 @@ function classifyIntent(input) {
         extractedYears = Array.from(new Set(yearMatches));
         extractedYear = extractedYears.join(' & ');
     }
+
+    // --- Wire up NLP Tokenizer (Ignore grammar/stop words for robust matching) ---
+    const nlpData = processNLPInput(cleanInput);
+    cleanInput = nlpData.cleanString;
+    // -----------------------------------------------------------------------------
 
     // 0. Placement Regex Override (Detect Year-wise Dept Placements early)
     let pMatch = /(?:placement stats|placement statistics|placement|placements|highest package|average package|salary)\s+(?:for|in|of)?\s*([a-zA-Z\s\(\)]+)/i.exec(cleanInput);
