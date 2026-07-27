@@ -1,22 +1,27 @@
 const fs = require('fs');
+
 const scriptContent = fs.readFileSync('script.js', 'utf8');
 
-// Use eval to load just the NLP portion we added
-const nlpPortion = scriptContent.substring(
-    scriptContent.indexOf('const STOP_WORDS'),
-    scriptContent.indexOf('/* =============== CONTENT MODERATION =============== */')
-);
+// Extract just the NLP portion for isolated testing
+const nlpStart = scriptContent.indexOf('const STOP_WORDS');
+const nlpEnd = scriptContent.indexOf('/* =============== CONTENT MODERATION =============== */');
+const nlpPortion = scriptContent.substring(nlpStart, nlpEnd);
 
 eval(nlpPortion);
 
-const test1 = "Can you please tell me about the Computer Science HOD?";
-const res1 = processNLPInput(test1);
-console.log("Input:", test1);
-console.log("Tokens:", res1.tokens);
-console.log("Clean String:", res1.cleanString);
+const tests = [
+    "what is cse",
+    "what is ise",
+    "tell me about mechanical",
+    "what is the fee for cse",
+    "show me hod of ece",
+    "admissions process",
+    "what is placement statistics for computer science",
+];
 
-const test2 = "What is the fee structure for management quota in 2026?!";
-const res2 = processNLPInput(test2);
-console.log("\nInput:", test2);
-console.log("Tokens:", res2.tokens);
-console.log("Clean String:", res2.cleanString);
+for (const t of tests) {
+    const result = processNLPInput(t);
+    console.log(`Input: "${t}"`);
+    console.log(`  → Tokens: [${result.tokens.join(', ')}]`);
+    console.log(`  → Clean:  "${result.cleanString}"\n`);
+}

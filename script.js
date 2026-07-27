@@ -7,10 +7,14 @@ let chatOpen = false;
 
 /* =============== NLP TOKENIZER & PROCESSOR =============== */
 const STOP_WORDS = new Set([
-    "what", "is", "the", "a", "an", "can", "you", "tell", "me", "about",
-    "show", "give", "i", "want", "to", "know", "how", "do", "does", "are",
-    "of", "in", "on", "at", "for", "with", "and", "or", "but", "so", "because",
-    "please", "hi", "hello", "hey", "sir", "madam", "could", "would", "should"
+    // Only remove words that are 3+ letters and are NEVER department codes or keywords
+    "what", "the", "can", "you", "tell", "about",
+    "show", "give", "want", "know", "how", "does", "are",
+    "for", "with", "but", "because",
+    "please", "hello", "hey", "sir", "madam", "could", "would", "should"
+    // INTENTIONALLY EXCLUDED (are department codes or contextually meaningful):
+    // "is" (ISE), "me" (Mechanical), "or" (used in phrases), "at", "in", "on", "an",
+    // "a", "i", "do", "and", "so", "of", "to", "hi"
 ]);
 
 function tokenize(text) {
