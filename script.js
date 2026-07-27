@@ -1504,6 +1504,9 @@ const QA = [
     {k:['vice principal','vp','vice-principal','who is vice principal','about vice principal','tell me about vice principal','dr k s geetha','geetha mam'],id:'vice_principal',p:1},
     {k:['hod','head of department','dean','deans','faculty','teachers','professors','who is the hod','list of hods','hods','who is hod','department head','heads','teaching staff'],id:'faculty',p:1.5},
     {k:['deans list','all deans','dean list','executive committee','key executives'],id:'deans_list',p:1},
+    {k:['dean academics','academic dean','dean of academics','who is dean academics'],id:'dean_academics',p:0.5},
+    {k:['dean student affairs','student affairs dean','dean of student affairs','who is dean student affairs'],id:'dean_student_affairs',p:0.5},
+    {k:['dean rnd','dean r and d','dean research','dean of research','who is dean research','research dean'],id:'dean_rnd',p:0.5},
     {k:['hods list','list of hods','all hods','hod list','head of departments','all heads'],id:'hods_list',p:1},
     {k:['coe','coes','centres of excellence','centers of excellence','coe list','research centres','research centers','innovation hubs','all coes','list of coes'],id:'centres_of_excellence',p:1},
     // Specific COE search intents (higher priority for specific names)
@@ -3154,6 +3157,15 @@ function getResponse(id) {
         r.text += T("Here are the top commanders at RVCE! ⚓\n\n","RVCE Deans & Key Executives:\n\n");
         r.text += "• **Principal:** Dr. K.N. Subramanya\n• **Vice Principal:** Dr. K. S. Geetha\n• **Dean Academics:** Dr. M.V. Renukadevi\n• **Dean Student Affairs:** Dr. B.M. Sagar\n• **Dean R&D:** Dr. M Uttara Kumari\n• **Dean CSE Cluster:** Dr. Ramakanth Kumar P\n• **Dean PG Circuit:** Dr. K Sreelakshmi\n• **Dean PG Non-Circuit:** Dr. Radhakrishna\n• **Dean Skill Dev:** Dr. M Krishna\n• **Dean Placement & Training:** Dr. D. Ranganath\n• **Dean Global Partnerships:** Dr. J R Nataraj";
         r.buttons = [{l:'HODs List 📚',a:'hods_list',i:'👩‍🏫'}, {l:'Key Executives Page',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}]; break;
+    case 'dean_academics':
+        r.text += T("👩‍🏫 **Dean (Academics):** Dr. M.V. Renukadevi\n\n📌 **Role:** Heading Academic Regulations, Curriculum & Evaluation at RVCE.", "👩‍🏫 **Dean (Academics):** Dr. M.V. Renukadevi\n\nHeading Academic Affairs & Curriculum at RVCE.");
+        r.buttons = [{l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Principal 👨‍🏫',a:'principal',i:'👨‍🏫'}]; break;
+    case 'dean_student_affairs':
+        r.text += T("👨‍🏫 **Dean (Student Affairs):** Dr. B.M. Sagar\n\n📌 **Role:** Heading Student Activities, Welfare & Clubs at RVCE.", "👨‍🏫 **Dean (Student Affairs):** Dr. B.M. Sagar\n\nHeading Student Welfare & Campus Activities at RVCE.");
+        r.buttons = [{l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Cultural Life 🎭',a:'culturalLife',i:'🎭'}]; break;
+    case 'dean_rnd':
+        r.text += T("👩‍🔬 **Dean (Research & Development):** Dr. M Uttara Kumari\n\n📌 **Role:** Heading Research Projects, Patents & Grants at RVCE.", "👩‍🔬 **Dean (R&D):** Dr. M Uttara Kumari\n\nHeading Research & Innovation at RVCE.");
+        r.buttons = [{l:'Research & R&D 🔬',a:'research',i:'🔬'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}]; break;
     case 'hods_list':
         r.text += T("Here are the Heads of Departments (HODs): 📚\n\n","RVCE Head of Departments:\n\n");
         r.text += "• **CSE:** Dr. Shanta Rangaswamy\n• **AIML:** To Be Appointed\n• **ISE:** Dr. Mamatha G S\n• **ECE:** Dr. Ravish Aradhya H V\n• **Mechanical:** Dr. Shanmukha Nagaraj\n• **Civil:** Dr. Anjaneyappa\n• **EEE:** Dr. J N Hemalatha (I/c)\n• **Aerospace:** [Dr. Supreeth R](https://rvce.edu.in/department/ae/dr_r_supreeth/)\n• **Biotech:** Dr. Nagashree N Rao\n• **Chemical:** Dr. Jagadish H Patil\n• **EIE:** Dr. CH. Renumadhavi\n• **ETE:** Dr. Nagamani K\n• **IEM:** Dr. Rajeswara Rao K V S\n• **MCA:** Dr. Jasmine K S\n• **Physics:** Dr. G. Shireesha\n• **Maths:** Dr. Jayalatha G\n• **Chemistry:** Dr. Mahesh R";
