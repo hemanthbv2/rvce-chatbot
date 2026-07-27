@@ -1,6 +1,46 @@
 
 --- https://rvce.edu.in/department/cse/placement/ ---
 Highlights:
+Average Salary (LPA) 0
+Average Salary (LPA) 0
+Average Salary (LPA)
+Average Salary (LPA)
+Average Salary (LPA)
+Maximum salary(LPA) 0
+Maximum salary(LPA) 0
+Maximum salary(LPA)
+Maximum salary(LPA)
+Maximum salary(LPA)
+Average Salary (LPA) 0
+Average Salary (LPA) 0
+Average Salary (LPA)
+Average Salary (LPA)
+Average Salary (LPA)
+Maximum salary(LPA) 0
+Maximum salary(LPA) 0
+Maximum salary(LPA)
+Maximum salary(LPA)
+Maximum salary(LPA)
+Average Salary (LPA) 0
+Average Salary (LPA) 0
+Average Salary (LPA)
+Average Salary (LPA)
+Average Salary (LPA)
+Maximum salary(LPA) 0
+Maximum salary(LPA) 0
+Maximum salary(LPA)
+Maximum salary(LPA)
+Maximum salary(LPA)
+Average Salary (LPA) 0
+Average Salary (LPA) 0
+Average Salary (LPA)
+Average Salary (LPA)
+Average Salary (LPA)
+Maximum salary(LPA) 0
+Maximum salary(LPA) 0
+Maximum salary(LPA)
+Maximum salary(LPA)
+Maximum salary(LPA)
 Average Salary 0 LPA
 Average Salary 0 LPA
 Average Salary
@@ -16,16 +56,6 @@ Maximum salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average 0
-Average 0
-Average
-Average
-Average
-Average 0
-Average 0
-Average
-Average
-Average
 Average Salary 0 LPA
 Average Salary 0 LPA
 Average Salary
@@ -41,63 +71,36 @@ Maximum salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average Salary 0 LPA
-Average Salary 0 LPA
-Average Salary
-Average Salary
-Average Salary
-0 LPA
-0 LPA
-0 LPA
-0 LPA
-Maximum salary 0 LPA
-Maximum salary 0 LPA
-0 LPA
-0 LPA
-0 LPA
-0 LPA
-Average Salary 0 LPA
-Average Salary 0 LPA
-Average Salary
-Average Salary
-Average Salary
-0 LPA
-0 LPA
-0 LPA
-0 LPA
-Maximum salary 0 LPA
-Maximum salary 0 LPA
-0 LPA
-0 LPA
-0 LPA
-0 LPA
-Average Salary: 19.73 LPA
-Average Salary: 19.73 LPA
-Average Salary: 19.73 LPA
-Maximum Salary: 67 LPA
-Maximum Salary: 67 LPA
-Maximum Salary: 67 LPA
-Average salary – 15.81 LPA
-Average salary – 15.81 LPA
-Average salary – 15.81 LPA
-Maximum salary – 67 LPA
-Maximum salary – 67 LPA
-Maximum salary – 67 LPA
-Average salary – 14.66 LPA
-Average salary – 14.66 LPA
-Average salary – 14.66 LPA
-Maximum salary – 48 LPA
-Maximum salary – 48 LPA
-Maximum salary – 48 LPA
-Average salary – 14.12 LPA
-Average salary – 14.12 LPA
-Average salary – 14.12 LPA
-Maximum salary – 35.37 LPA
-Maximum salary – 35.37 LPA
-Maximum salary – 35.37 LPA
-Average salary – XXX
-Average salary – XXX
-Average salary – XXX
+Average Salary(LPA) – 16.92
+Average Salary(LPA) – 16.92
+Average Salary(LPA) – 16.92
+Maximum Salary(LPA) – 67
+Maximum Salary(LPA) – 67
+Maximum Salary(LPA) – 67
+Average salary(LPA) – 15.81
+Average salary(LPA) – 15.81
+Average salary(LPA) – 15.81
+Maximum salary(LPA) – 67
+Maximum salary(LPA) – 67
+Maximum salary(LPA) – 67
+Average salary (LPA)- 14.66
+Average salary (LPA)- 14.66
+Average salary (LPA)- 14.66
+Maximum salary(LPA) – 48
+Maximum salary(LPA) – 48
+Maximum salary(LPA) – 48
+Average salary(LPA) – 14.12
+Average salary(LPA) – 14.12
+Average salary(LPA) – 14.12
+Maximum salary(LPA) – 35.37
+Maximum salary(LPA) – 35.37
+Maximum salary(LPA) – 35.37
+Average salary(LPA) – 15.01
+Average salary(LPA) – 15.01
+Average salary(LPA) – 15.01
+Maximum salary(LPA) – 32
+Maximum salary(LPA) – 32
+Maximum salary(LPA) – 32
 Average Salary: 19.21 LPA
 Average Salary: 19.21 LPA
 Average Salary: 19.21 LPA
@@ -293,13 +296,16 @@ Average Salary TBD Later
 Average Salary
 Average Salary
 Average Salary
-Average salary – TBD Later
-Average salary – TBD Later
-Average salary – TBD Later
-Average salary
-Average salary -7.02
-Average salary -7.02
-Average salary -7.02
+Average salary (LPA) -8.12
+Average salary (LPA) -8.12
+Average salary (LPA) -8.12
+Average salary (LPA)
+Maximum salary (LPA)- 11.00
+Maximum salary (LPA)- 11.00
+Maximum salary (LPA)- 11.00
+Average salary (LAP)-7.02
+Average salary (LAP)-7.02
+Average salary (LAP)-7.02
 Average salary
 Average salary – 6.83
 Average salary – 6.83
@@ -383,12 +389,14 @@ Maximum Salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average salary – 17.29 Maximum salary – 53
-Average salary – 17.29 Maximum salary – 53
-Average salary – 17.29
-Average salary – 17.29
-Average salary – 17.29
-Average salary
+Average salary(LPA) – 14.50
+Average salary(LPA) – 14.50
+Average salary(LPA) – 14.50
+Average salary(LPA)
+Maximum salary(LPA) – 53
+Maximum salary(LPA) – 53
+Maximum salary(LPA) – 53
+Maximum salary(LPA)
 AverageX
 AverageX
 AverageX
@@ -487,13 +495,21 @@ Maximum salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average salary (LPA) –
-Average salary (LPA) –
-Average salary (LPA) –
+Average salary – (LPA) – 5.5
+Average salary – (LPA) – 5.5
+Average salary – (LPA) – 5.5
+Average salary – (LPA)
+Maximum salary (LPA) – 6
+Maximum salary (LPA) – 6
+Maximum salary (LPA) – 6
+Maximum salary (LPA)
+Average salary (LPA) – 4.75
+Average salary (LPA) – 4.75
+Average salary (LPA) – 4.75
 Average salary (LPA)
-Maximum salary (LPA) –
-Maximum salary (LPA) –
-Maximum salary (LPA) –
+Maximum salary (LPA) – 14.81
+Maximum salary (LPA) – 14.81
+Maximum salary (LPA) – 14.81
 Maximum salary (LPA)
 Average salary (LPA)– 5.49
 Average salary (LPA)– 5.49
@@ -503,22 +519,6 @@ Maximum salary (LPA) – 12
 Maximum salary (LPA) – 12
 Maximum salary (LPA) – 12
 Maximum salary (LPA)
-Average salary (LPA)– 5.42
-Average salary (LPA)– 5.42
-Average salary (LPA)– 5.42
-Average salary (LPA)
-Maximum salary (LPA) – 16
-Maximum salary (LPA) – 16
-Maximum salary (LPA) – 16
-Maximum salary (LPA)
-Average salary (LPA) – 5.51
-Average salary (LPA) – 5.51
-Average salary (LPA) – 5.51
-Average salary (LPA)
-Maximum salary (LPA) – 4.9
-Maximum salary (LPA) – 4.9
-Maximum salary (LPA) – 4.9
-Maximum salary (LPA)
 Average salary (LPA) – 5.42
 Average salary (LPA) – 5.42
 Average salary (LPA) – 5.42
@@ -527,6 +527,14 @@ Maximum salary (LPA) – 11.6
 Maximum salary (LPA) – 11.6
 Maximum salary (LPA) – 11.6
 Maximum salary (LPA)
+Maximum salary (LPA) – 16
+Maximum salary (LPA) – 16
+Maximum salary (LPA) – 16
+Maximum salary (LPA)
+Average salary (LPA)– 5.42
+Average salary (LPA)– 5.42
+Average salary (LPA)– 5.42
+Average salary (LPA)
 Average salary (LPA) – 4.30
 Average salary (LPA) – 4.30
 Average salary (LPA) – 4.30
@@ -620,22 +628,38 @@ Average Salary 0
 Average Salary
 Average Salary
 Average Salary
-Average salary – 9.94
-Average salary – 9.94
-Average salary – 9.94
-Average salary
-Average salary – 6.78
-Average salary – 6.78
-Average salary – 6.78
-Average salary
-Average salary – 7.7
-Average salary – 7.7
-Average salary – 7.7
-Average salary
-Average salary – 7.14
-Average salary – 7.14
-Average salary – 7.14
-Average salary
+Average salary(LPA) – 6.69
+Average salary(LPA) – 6.69
+Average salary(LPA) – 6.69
+Average salary(LPA)
+Maximum salary(LPA) – 14.63
+Maximum salary(LPA) – 14.63
+Maximum salary(LPA) – 14.63
+Maximum salary(LPA)
+Average salary(LPA) – 6.78
+Average salary(LPA) – 6.78
+Average salary(LPA) – 6.78
+Average salary(LPA)
+Maximum salary(LPA) -15.7
+Maximum salary(LPA) -15.7
+Maximum salary(LPA) -15.7
+Maximum salary(LPA)
+Average salary(LPA) – 7.7
+Average salary(LPA) – 7.7
+Average salary(LPA) – 7.7
+Average salary(LPA)
+Maximum salary(LPA) -13.95
+Maximum salary(LPA) -13.95
+Maximum salary(LPA) -13.95
+Maximum salary(LPA)
+Average salary(LPA) – 7.14
+Average salary(LPA) – 7.14
+Average salary(LPA) – 7.14
+Average salary(LPA)
+Maximum salary(LPA) – 12.9
+Maximum salary(LPA) – 12.9
+Maximum salary(LPA) – 12.9
+Maximum salary(LPA)
 Average10.44
 Average10.44
 Average10.44
@@ -736,12 +760,12 @@ Maximum salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average Salary: 7.03 LPA
-Average Salary: 7.03 LPA
-Average Salary: 7.03 LPA
-Maximum Salary: 18.33 LPA
-Maximum Salary: 18.33 LPA
-Maximum Salary: 18.33 LPA
+Average Salary(LPA) – 5.52
+Average Salary(LPA) – 5.52
+Average Salary(LPA) – 5.52
+Maximum Salary(LPA) – 33
+Maximum Salary(LPA) – 33
+Maximum Salary(LPA) – 33
 Average salary – 5.11 LPA
 Average salary – 5.11 LPA
 Average salary – 5.11 LPA
@@ -931,10 +955,14 @@ Average Salary 0
 Average Salary
 Average Salary
 Average Salary
-Average salary – 12.45
-Average salary – 12.45
-Average salary – 12.45
-Average salary
+Average salary(LPA) – 10.26
+Average salary(LPA) – 10.26
+Average salary(LPA) – 10.26
+Average salary(LPA)
+Maximum salary(LPA) – 25.72
+Maximum salary(LPA) – 25.72
+Maximum salary(LPA) – 25.72
+Maximum salary(LPA)
 Average salary – 8.83
 Average salary – 8.83
 Average salary – 8.83
@@ -1108,17 +1136,21 @@ Maximum salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average Salary– 16.47
-Average Salary– 16.47
-Average Salary– 16.47
+Average Salary(LPA)– 13.40
+Average Salary(LPA)– 13.40
+Average Salary(LPA)– 13.40
+Average Salary(LPA)
+Maximum salary(LPA)– 44.72
+Maximum salary(LPA)– 44.72
+Maximum salary(LPA)– 44.72
+Maximum salary(LPA)
+Average Salary– 11.27
+Average Salary– 11.27
+Average Salary– 11.27
 Average Salary
 Average Salary– 12.12
 Average Salary– 12.12
 Average Salary– 12.12
-Average Salary
-Average Salary– 11.27
-Average Salary– 11.27
-Average Salary– 11.27
 Average Salary
 Average Salary– 84
 Average Salary– 84
@@ -1219,10 +1251,14 @@ Average Salary 0
 Average Salary
 Average Salary
 Average Salary
-Average salary – 11.77
-Average salary – 11.77
-Average salary – 11.77
-Average salary
+Average salary(LPA) – 9.28
+Average salary(LPA) – 9.28
+Average salary(LPA) – 9.28
+Average salary(LPA)
+Maximum salary(LPA) – 39
+Maximum salary(LPA) – 39
+Maximum salary(LPA) – 39
+Maximum salary(LPA)
 Average salary – 9.29
 Average salary – 9.29
 Average salary – 9.29
@@ -1320,10 +1356,14 @@ Maximum salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average Salary– 12.46
-Average Salary– 12.46
-Average Salary– 12.46
-Average Salary
+Average Salary(LPA)-7.68
+Average Salary(LPA)-7.68
+Average Salary(LPA)-7.68
+Average Salary(LPA)-7.68
+Maximum salary(LPA)– 21.45
+Maximum salary(LPA)– 21.45
+Maximum salary(LPA)– 21.45
+Maximum salary(LPA)
 Average Salary– 9.06
 Average Salary– 9.06
 Average Salary– 9.06
@@ -1409,10 +1449,14 @@ Average Salary
 Average Salary
 Average Salary
 Average Salary
-Average salary – 19.11
-Average salary – 19.11
-Average salary – 19.11
-Average salary
+Average salary(LPA) – 15.41
+Average salary(LPA) – 15.41
+Average salary(LPA) – 15.41
+Average salary(LPA)
+Maximum salary(LPA) – 67
+Maximum salary(LPA) – 67
+Maximum salary(LPA) – 67
+Maximum salary(LPA)
 Average salary – 16.37
 Average salary – 16.37
 Average salary – 16.37
@@ -1562,14 +1606,32 @@ Tables:
 
 --- https://rvce.edu.in/department/mca/placement/ ---
 Highlights:
-Average Salary 0
-Average Salary 0
+Average Salary 0 LPA
+Average Salary 0 LPA
 Average Salary
 Average Salary
 Average Salary
-Average salary – 8.94
-Average salary – 8.94
-Average salary – 8.94
+0 LPA
+0 LPA
+0 LPA
+0 LPA
+Maximum Salary 0 LPA
+Maximum Salary 0 LPA
+0 LPA
+0 LPA
+0 LPA
+0 LPA
+Average Salary (LPA) – 4.4
+Average Salary (LPA) – 4.4
+Average Salary (LPA) – 4.4
+Average Salary
+Maximum Salary (LPA) – 11.59
+Maximum Salary (LPA) – 11.59
+Maximum Salary (LPA) – 11.59
+Maximum Salary (LPA)
+Average salary – 9
+Average salary – 9
+Average salary – 9
 Average salary
 Average salary – 8.29
 Average salary – 8.29
@@ -1583,31 +1645,32 @@ Average salary – 7.5
 Average salary – 7.5
 Average salary – 7.5
 Average salary
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
-AverageX
+Average4
+Average4
+Average4
+Average4
+Average4
+Average 9
+Average 9
+Average 9
+Average 9
+Average 8.9
+Average 8.9
+Average 8.9
+Average 8.9
+Average10
+Average10
+Average10
+Average10
+Average 7.5
+Average 7.5
+Average 7.5
+Average 7.5
+Average4
+Average4
+Average4
+Average4
+Average4
 AverageX
 AverageX
 AverageX
@@ -1683,12 +1746,12 @@ Maximum salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
-Average salary – 9.22 LPA
-Average salary – 9.22 LPA
-Average salary – 9.22 LPA
-Maximum salary – 18.33 LPA
-Maximum salary – 18.33 LPA
-Maximum salary – 18.33 LPA
+Average salary(LPA) – 7.52
+Average salary(LPA) – 7.52
+Average salary(LPA) – 7.52
+Maximum salary(LPA) – 18.33
+Maximum salary(LPA) – 18.33
+Maximum salary(LPA) – 18.33
 Average salary – 7.51 LPA
 Average salary – 7.51 LPA
 Average salary – 7.51 LPA
@@ -1907,6 +1970,12 @@ Maximum Salary 0 LPA
 0 LPA
 0 LPA
 0 LPA
+Average salary(LPA) – 9.67
+Average salary(LPA) – 9.67
+Average salary(LPA) – 9.67
+Maximum salary(LPA) – 39
+Maximum salary(LPA) – 39
+Maximum salary(LPA) – 39
 Average salary – 15 LPA
 Average salary – 15 LPA
 Average salary – 15 LPA

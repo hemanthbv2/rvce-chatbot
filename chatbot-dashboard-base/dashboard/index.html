@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RVCE Chatbot Admin Dashboard</title>
+    <!-- Modern Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>RVCE Admin</h2>
+                <button id="close-sidebar" class="mobile-only">×</button>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Overview
+                </a>
+                <a href="#">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Conversations
+                </a>
+                <a href="#">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Bot Settings
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <button id="menu-toggle" class="mobile-only">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <h1>Dashboard Overview</h1>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin Profile">
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                
+                <!-- Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="card metric-card">
+                        <h3>Total Conversations</h3>
+                        <p class="metric-value">1,248</p>
+                        <span class="trend positive">+12% this week</span>
+                    </div>
+                    <div class="card metric-card">
+                        <h3>Active Users</h3>
+                        <p class="metric-value">43</p>
+                        <span class="trend positive">+5% today</span>
+                    </div>
+                    <div class="card metric-card">
+                        <h3>Avg Response Time</h3>
+                        <p class="metric-value">1.2s</p>
+                        <span class="trend neutral">Steady</span>
+                    </div>
+                    <div class="card metric-card">
+                        <h3>Satisfaction Rate</h3>
+                        <p class="metric-value">94%</p>
+                        <span class="trend positive">+2% this month</span>
+                    </div>
+                </div>
+
+                <!-- Main Chart Area Placeholder -->
+                <div class="card chart-container">
+                    <h3>Chat Volume (Last 7 Days)</h3>
+                    <div class="chart-placeholder">
+                        <p>Chart Rendering Area (Integrate Chart.js here)</p>
+                    </div>
+                </div>
+
+                <!-- Recent Conversations Table -->
+                <div class="card table-container">
+                    <h3>Recent Conversations</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Query Topic</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#USR-1029</td>
+                                <td>Admissions 2026</td>
+                                <td><span class="badge resolved">Resolved</span></td>
+                                <td>2 mins ago</td>
+                            </tr>
+                            <tr>
+                                <td>#USR-1028</td>
+                                <td>Hostel Fees</td>
+                                <td><span class="badge pending">Pending</span></td>
+                                <td>15 mins ago</td>
+                            </tr>
+                            <tr>
+                                <td>#USR-1027</td>
+                                <td>Placements CS</td>
+                                <td><span class="badge resolved">Resolved</span></td>
+                                <td>1 hour ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
