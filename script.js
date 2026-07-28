@@ -10,7 +10,7 @@ const STOP_WORDS = new Set([
     // Only remove words that are 3+ letters and are NEVER department codes or keywords
     "what", "the", "can", "you", "tell", "about",
     "show", "give", "want", "know", "how", "does", "are",
-    "for", "with", "but", "because",
+    "for", "with", "but", "because", "curious", "whats", "info", "details", "pls", "plz", "urgent",
     "please", "hello", "hey", "sir", "madam", "could", "would", "should"
     // INTENTIONALLY EXCLUDED (are department codes or contextually meaningful):
     // "is" (ISE), "me" (Mechanical), "or" (used in phrases), "at", "in", "on", "an",
@@ -1460,7 +1460,7 @@ function sanitize(input) {
         'ae': 'aerospace', 'aero': 'aerospace',
         'ch': 'chemical', 'chem': 'chemical',
         'bt': 'biotech', 'biotech': 'biotechnology',
-        'im': 'industrial', 'iem': 'industrial',
+        'iem': 'industrial',
         'ei': 'instrumentation', 'eie': 'instrumentation',
         'et': 'telecommunication', 'ete': 'telecommunication',
         'aiml': 'artificial intelligence'
