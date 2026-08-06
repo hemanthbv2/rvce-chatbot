@@ -483,7 +483,8 @@ const KB = {
                 u:"https://rvce.edu.in/department/ai_ml/main_department/",
                 intake: "180",
                 accreditation: "Not specified/New", 
-                hod:"To Be Appointed",
+                hod:"Dr. Deepamala N (Program Coordinator)",
+                hod_url: "https://rvce.edu.in/department/cse/dr_deepamala_n/",
                 info: "Established in 2021, the programme builds a strong foundation in computer science engineering with focused training in Artificial Intelligence, Machine Learning, Deep Learning, and Data Science.",
                 about: "https://rvce.edu.in/department/ai_ml/about_the_department/",
                 syllabus: "https://rvce.edu.in/academics_and_examinations/rvce_scheme_syllabus/#ug",
@@ -1444,6 +1445,11 @@ const KB = {
 
 /* =============== INPUT SANITIZATION =============== */
 function sanitize(input) {
+    // 0. Special condition for CSE specializations and specific overlaps
+    input = input.replace(/\b(?:cse|cs)\s+(aiml|ai\s*ml|ai|ds|data\s*science|cy|cyber|cyber\s*security)\b/gi, '$1');
+    input = input.replace(/\bsustainability\s+events?\b/gi, 'sustainability');
+    input = input.replace(/\bmou's\b/gi, 'mous');
+
     // 1. Remove dots explicitly to handle c.s.e -> cse
     let cleaned = input.replace(/\./g, '');
     // 2. Remove other special chars but keep underscores and hyphens (vital for years like 2024-25)
@@ -1481,7 +1487,7 @@ const QA = [
     {k:['circular','circulars','announcement','announcements','latest news','recent notice','notices','update','notification','notifications'],id:'circulars',p:1},
     {k:['career','careers','future','jobs','roles','opportunities','scope','prospects','options'],id:'career_options_menu',p:4},
     // P1: Specific topics
-    {k:['hostel','hostels','accommodation','dorm','dormitory','boys hostel','girls hostel','hostel fee','hostel room','single room','shared room','hostel mess','staying','where to stay','stay at rvce','pg','paying guest','hostel life','hstl','hostl'],id:'hostels',p:1},
+    {k:['hostel','hostels','accommodation','dorm','dormitory','hostel fee','hostel room','single room','shared room','hostel mess','staying','where to stay','stay at rvce','pg','paying guest','hostel life','hstl','hostl'],id:'hostels',p:1},
     {k:['mess','mess food','hostel food','mess menu','breakfast','lunch','dinner','food in hostel','mess charges','mess committee'],id:'mess',p:1},
     {k:['transport','how to reach','bmtc','bus route','kengeri metro','commute to rvce','distance from','reach rvce','reach the college','how to get there','travel to rvce','cab to rvce','auto to rvce','ola to rvce','uber to rvce','metro station','nearest metro'],id:'transport',p:1},
     {k:['wifi','internet','wi fi','connectivity','broadband','net access','wifi password','net speed','slow internet'],id:'wifi',p:1},
@@ -1532,19 +1538,20 @@ const QA = [
     {k:['5g coe','5g wireless coe','etc coe research','wireless technology coe'],id:'coe_5g',p:0.5},
     {k:['emobility coe','smart grid coe','eee coe research','mobility coe'],id:'coe_mobility',p:0.5},
     {k:['boston ai coe','rvce boston coe','graphcore coe','petaflop coe','boston research'],id:'coe_boston',p:0.5},
-    {k:['collaboration','collaborations','partnership','partnerships','industry partners','mou','tie up','tieups','industry tie ups','google','microsoft','tata','tata technologies','boeing','airbus','isro','navy','all collaborations','rvce partners','industry mou'],id:'collaborations',p:1},
+    {k:['collaboration','collaborations','partnership','partnerships','industry partners','mou','mous','memorandum','memorandum of understanding','tie up','tieups','industry tie ups','google','microsoft','tata','tata technologies','boeing','airbus','isro','navy','all collaborations','rvce partners','industry mou'],id:'collaborations',p:1},
     {k:['germany','german','indo german','germany program','german program','thws','indo-german','indo german coe','germany coe','würzburg','wurzburg','schweinfurt'],id:'germany_program',p:0.5},
     {k:['social media','facebook','instagram','linkedin','twitter','x handle','follow us','social handles','social links','connect','online presence','fb','insta'],id:'social',p:1},
     {k:['boston','boston training academy','boston uk','boston ai','graphcore','ai research centre'],id:'boston',p:1},
     {k:['health center','health centre','doctor','medical','ambulance','sick','hospital','first aid','emergency medical','clinic'],id:'health_centre',p:1},
     {k:['ieee','sae','acm','csi','societies','professional societies','student chapters','chapters'],id:'professional_societies',p:1},
     {k:['upcoming events','workshops','conferences','what is happening','happening soon'],id:'upcoming_events',p:1.2},
-    {k:['calendar','academic calendar','calendar of events','events','college events'],id:'calendar_events',p:0.7},
+    {k:['calendar','academic calendar','calendar of events','events','college events','rvce events','latest events','recent events','event'],id:'calendar_events',p:0.7},
     {k:['ranking','nirf','iirf','college ranking','where does rvce rank','ranked','best college','rvce rank','top college','rvce ranking'],id:'ranking',p:1},
     {k:['accreditation','naac','nba','naac grade','naac rating','accredited'],id:'accreditation',p:1},
     {k:['timing','timings','working hours','college hours','college time','what time','opening time','closing time','open close','class timings','college timing','kab khulta','when open'],id:'timings',p:1},
     {k:['trust','trust details'],id:'trust',p:1},
     {k:['research','patent','patents','innovation centre','centre of excellence','research centre','grants','funding','research at rvce','research lab','r and d','rnd'],id:'research',p:1},
+    {k:['iqac','internal quality assurance','quality assurance cell','iqac cell','naac iqac','quality assurance','iqac rvce'],id:'iqac',p:1},
     {k:['mca','master of computer application','mca dept','mca department','mca course','mca admission'],id:'dept_mca',p:1},
     {k:['phd','doctoral','doctorate','research program','doctor degree','phd admission','phd at rvce'],id:'phd',p:1},
     {k:['vtu','visvesvaraya','affiliated university','university affiliation','vtu affiliation'],id:'vtu',p:1},
@@ -1555,10 +1562,10 @@ const QA = [
     {k:['autonomous','autonomy','own syllabus','own exam','autonomous status','is rvce autonomous'],id:'autonomous',p:1},
     {k:['stat','stats','statistic','statistics','figure','figures','data'],id:'stats_disambiguation',p:0.4},
     {k:['number','numbers','num','contact number','phone number','official number','calling','mobile'],id:'numbers_info',p:2.5},
-    {k:['placement director','placement officer','dean placement','placement dean','head of placement','placement cell head','who is placement director','placement incharge','placement head','director of placement','placement officer name'],id:'placement_director',p:0.5},
+    {k:['placement director','placement officer','dean placement','placement dean','head of placement','placement cell head','who is placement director','placement incharge','placement head','director of placement','placement officer name'],id:'placement_director',p:0.2},
     // Department-specific (with short codes + college slang)
     {k:['computer science','cse','cs','cs department','computer science engineering','cse department','comps','comp sci','cs branch','cs dept'],id:'dept_cs',p:1},
-    {k:['artificial intelligence','aiml','ai ml','machine learning','ai department','ai branch','ml branch','ai and ml'],id:'dept_aiml',p:1},
+    {k:['artificial intelligence','aiml','ai ml','machine learning','ai department','ai branch','ml branch','ai and ml','cse aiml','cse ai ml','cse ai','cse artificial intelligence'],id:'dept_aiml',p:0.5},
     {k:['electronics and communication','ece','ec','ec department','ece department','entc','e and c','ec branch'],id:'dept_ec',p:1},
     {k:['mechanical engineering','me department','mech','mech department','mechanical','mech engg','mech branch','mechies'],id:'dept_me',p:1},
     {k:['civil engineering','cv department','cv','civil department','civil','civil branch','cv branch','civil engg'],id:'dept_cv',p:1},
@@ -1567,8 +1574,8 @@ const QA = [
     {k:['biotech','bt','biotechnology','bio technology','bt department','bio tech','bio branch','biotech dept'],id:'dept_bt',p:1},
     {k:['chemical engineering','ch department','ch','chemical engg','che','chem engg','chem branch','chemical dept'],id:'dept_ch',p:1},
     {k:['information science','ise','is department','ise department','is branch','ise branch','info sci'],id:'dept_is',p:1},
-    {k:['data science','csds','ds','cs data science','csds department','ds branch','data sci','csds branch'],id:'dept_csds',p:1},
-    {k:['cyber security','cscy','cy','cs cyber security','cscy department','cyber','cyber branch','cscy branch','cybersec'],id:'dept_cscy',p:1},
+    {k:['data science','csds','ds','cs data science','csds department','ds branch','data sci','csds branch','cse ds','cse data science','cse data'],id:'dept_csds',p:0.5},
+    {k:['cyber security','cscy','cy','cs cyber security','cscy department','cyber','cyber branch','cscy branch','cybersec','cse cy','cse cyber','cse cyber security'],id:'dept_cscy',p:0.5},
     {k:['telecom','ete','tc','telecommunication','ete department','tc branch','ete branch','tele'],id:'dept_et',p:1},
     {k:['instrumentation','eie','ei','ei department','eie department','instr','instru','ei branch','eie branch'],id:'dept_ei',p:1},
     {k:['industrial engineering','iem','ie','iem department','industrial management','ie branch','iem branch','industrial'],id:'dept_im',p:1},
@@ -1607,7 +1614,9 @@ const QA = [
     {k:['safe','safety','is it safe','is my child safe','is my daughter safe','security','cctv','campus security','safe for girls','is rvce safe','how safe','secure','campus safety','child safety','girl safety','daughter safety','women safety'],id:'safety',p:0.8},
     {k:['attendance','attendance rules','attendance requirement','minimum attendance','85 percent','attendance mandatory','bunking','bunk','proxy','absent','leave policy','attendance policy','how strict','strict attendance','will my child attend'],id:'attendance',p:1},
     {k:['roi','return on investment','worth the fees','worth the money','value for money','is it worth','paisa vasool','fee worth','investment','good investment','waste of money','expensive but good','justification of fees'],id:'roi',p:1},
-    {k:['girls hostel','girls hostel rules','girls curfew','girls safety','female hostel','women hostel','hostel for girls','daughter hostel','curfew','curfew time','hostel timings','hostel curfew','in time','girls hostel fees','separate hostel','hostel rules for girls'],id:'girls_hostel',p:0.7},
+    {k:['girls hostel','girls hostel rules','girls curfew','girls safety','female hostel','women hostel','hostel for girls','daughter hostel','curfew','curfew time','hostel timings','hostel curfew','in time','girls hostel fees','separate hostel','hostel rules for girls','girls hostel facilities'],id:'girls_hostel',p:0.7},
+    {k:['boys hostel','boys hostel rules','boys hostel fee','male hostel','hostel for boys','boys accommodation','boys hostel single room','boys hostel facilities'],id:'boys_hostel',p:0.7},
+    {k:['environment','sustainability','environment and sustainability','green campus','solar power','rainwater harvesting','sewage treatment','eco friendly','stp','waste recycling','greenery','campus environment','solar energy','sustainable campus'],id:'environment_sustainability',p:1},
     {k:['nearby','surroundings','area around','near rvce','around campus','neighbourhood','neighborhood','food outside','restaurants near','hospital near','hospitals near','shops near','market near','atm near','nearby places','what is around'],id:'nearby',p:1},
     {k:['internship','internships','intern','summer intern','company intern','internship opportunities','internship cell','internship support','do students get internships','intern kahan','intern milta hai'],id:'internship',p:1},
     {k:['startup','entrepreneurship','startup culture','e cell','ecell','incubation','startup support','business','own company','startup scene','entrepreneur','innovation hub'],id:'startup',p:1},
@@ -1664,7 +1673,9 @@ const branchPlacementIntents = [];
 allBranches.forEach(branch => {
     const code = branch.c;
     const name = sanitize(branch.n.replace(/\s*\([^)]*\)$/, '').trim()).toLowerCase();
-    const shortCode = branch.c.toLowerCase();
+    let shortCode = branch.c.toLowerCase();
+    if (shortCode === 'is') shortCode = 'ise';
+    if (shortCode === 'me') shortCode = 'mech';
     
     const kws = [
         `${shortCode} placement`, `${shortCode} placements`, `${shortCode} salary`, `${shortCode} package`, `${shortCode} job`,
@@ -2156,7 +2167,7 @@ const INTENT_LABELS = {
     worth_it: 'Is RVCE Worth It? ⭐', best_branch: 'Best Branch 🔝', parking: 'Parking & Vehicles 🅿️', part_time: 'Part-time Work 💼',
     committees: 'Statutory Committees 🏛️', policies: 'Policies & Documents 📜',
     alumni: 'Alumni Network 🤝', college_compare: 'College Comparison 📊',
-    centres_of_excellence:'Centres of Excellence 🔬', collaborations:'Industry Partnerships 🤝', health_centre:'Health Facilities 🏥',
+    centres_of_excellence:'Centres of Excellence 🔬', collaborations:'Industry Partnerships 🤝', health_centre:'Health Facilities 🏥', iqac:'IQAC 📋',
     professional_societies:'Student Societies 🤝', upcoming_events:'Upcoming Events 📅',
     ncc:'NCC 🇮🇳', nss:'NSS 🤝', mandatory_disclosure:'Mandatory Disclosure 📄',
     kannada_sangha:'Kannada Sangha 🎭', rvjsteam:'RVJ STEAM Team 🎨', calendar_events:'Academic Calendar 📅',
@@ -2270,7 +2281,7 @@ function classifyIntent(input) {
     let strippedInput = cleanInput;
     if (typeof SESSION !== 'undefined' && SESSION.lastIntent && SESSION.lastIntent.startsWith('dept_')) {
         const hasTopic = contextualTopics.some(t => cleanInput.includes(t));
-        const hasDeptMention = cleanInput.match(/cse|cs|ec|mech|civil|ai|ml|ise|is|eee|ece|bt|ch|cv|ae|ie|eie|ete|mca/i);
+        const hasDeptMention = cleanInput.match(/\b(cse|cs|ece|ec|mech|civil|aiml|ai|ml|ise|eee|ee|biotech|bt|chemical|ch|cv|aerospace|ae|eie|ei|ete|et|mca|csds|cscy)\b/i);
         const hasGlobalRole = cleanInput.match(/director|dean|officer|principal|vice principal|incharge|head of placement/i);
         if (hasTopic && !hasDeptMention && !hasGlobalRole) {
             const branchCode = SESSION.lastIntent.replace('dept_', '');
@@ -2600,14 +2611,14 @@ function getDeepInfo(lastId) {
             Object.entries(KB.hostelDetails.boysBlocks).forEach(([k,v]) => { r.text += "\n• " + k.charAt(0).toUpperCase()+k.slice(1) + ": " + v; });
             r.text += "\n\n**Girls Blocks:**";
             Object.entries(KB.hostelDetails.girlsBlocks).forEach(([k,v]) => { r.text += "\n• " + k.charAt(0).toUpperCase()+k.slice(1) + ": " + v; });
-            r.text += "\n\n**Fees:**\n• Triple Sharing: " + KB.hostelDetails.fees.tripleSharing + "\n• Double Sharing: " + KB.hostelDetails.fees.doubleSharing;
+            r.text += "\n\n**Hostel Fees:** For hostel fee details, please contact the hostel administration or the admissions office.";
             r.text += "\n\n**Facilities:** " + KB.hostelDetails.facilities;
             r.buttons = [{l:'Girls Hostel',a:'girls_hostel',i:'🏠'},{l:'Campus Safety',a:'safety',i:'🛡️'}];
         },
         'departments': () => {
             r.text = T("RVCE has departments across multiple levels! 📚","Department Overview:");
             r.text += "\n\n**UG Programs (B.E.):** " + KB.departments.ug.length + " departments\n**PG Programs (M.Tech/MCA):** " + KB.departments.pg.length + " programs\n**PhD:** Available in all departments with 15 VTU-recognized Research Centres";
-            r.text += "\n\n**Top Departments:**\n• CSE — HOD: Dr. Shanta Rangaswamy\n• AIML — HOD: To Be Appointed\n• ECE — HOD: Dr. Ravish Aradhya H V\n• ISE — HOD: Dr. Mamatha G S\n• ME — HOD: Dr. Shanmukha Nagaraj";
+            r.text += "\n\n**Top Departments:**\n• CSE — HOD: Dr. Shanta Rangaswamy\n• AIML — Program Coordinator: Dr. Deepamala N\n• ECE — HOD: Dr. Ravish Aradhya H V\n• ISE — HOD: Dr. Mamatha G S\n• ME — HOD: Dr. Shanmukha Nagaraj";
             r.buttons = [{l:'UG Programs',a:'ugPrograms',i:'🎓'},{l:'PG Programs',a:'pgPrograms',i:'📘'},{l:'All HODs',a:'hods_list',i:'👩‍🏫'}];
         },
         'research': () => {
@@ -2631,11 +2642,11 @@ function getDeepInfo(lastId) {
             r.buttons = [{l:'Website',u:KB.contact.website,i:'🌐'},{l:'Contact Page',u:'https://rvce.edu.in/contact-us/',i:'📞'}];
         },
         'fees': () => {
-            r.text = T("Full fee breakdown! 💰","Detailed Fee Structure:");
-            r.text += "\n\n" + KB.admissions.fees;
-            r.text += "\n\n**Hostel Fees:**\n• Triple Sharing: " + KB.hostelDetails.fees.tripleSharing + "\n• Double Sharing: " + KB.hostelDetails.fees.doubleSharing;
+            r.text = T("For detailed fee information, please refer to the official Admission Circulars! 📄","Fee Information:");
+            r.text += "\n\nPlease check the Admission Circulars for the latest fee structure, payment details, and related information.";
+            r.text += "\n\n**Hostel Fees:** For hostel fee details, please contact the hostel administration.";
             r.text += "\n\n**Refund Policy:** AICTE rules apply — full refund (-₹1k processing) before commencement.";
-            r.buttons = [{l:'Fee Circulars',u:KB.circulars.feePayment,i:'📄'}];
+            r.buttons = [{l:'Admission Circulars',u:'https://rvce.edu.in/admission-circulars/',i:'📄'}];
         }
     };
     if (deepMap[lastId]) { deepMap[lastId](); return r; }
@@ -2813,9 +2824,10 @@ function getResponse(id) {
     case 'vision':
         r.text += T("RVCE's vision? Tech + Innovation + Sustainability = Future! 🚀","Vision: "+KB.general.vision); break;
     case 'principal':
-        r.text += T("Dr. K.N. Subramanya is the Principal! With 34+ years experience, he leads the team! ⚓",
-            "The Principal of RVCE is Dr. K.N. Subramanya.\n\nHe holds a B.E., M.Tech., MBA, and Ph.D., bringing over 34 years of experience in teaching, research, and administration.\n\nContact: [principal@rvce.edu.in](mailto:principal@rvce.edu.in)");
-        r.buttons = [{l:'About Principal',u:'https://rvce.edu.in/about-k_n_subramanya/',i:'👨‍🏫'}, {l:'Vice Principal',a:'vice_principal',i:'👩‍🏫'}]; break;
+        r.text += T("Dr. K.N. Subramanya is the Principal! An accomplished academician, researcher, and administrator with over 34 years of experience! ⚓",
+            "The Principal of RVCE is Dr. K.N. Subramanya.");
+        r.text += "\n\n🌟 **Profile:** An accomplished academician and administrator who fosters innovation and excellence with strong leadership and team-building skills.\n📌 **Department:** Industrial Engineering & Management (IEM)\n🎓 **Qualification:** B.E. (Ind & Prod), M.Tech (Ind Mgmt), MBA (HR), Ph.D. (Supply Chain)\n📚 **Experience:** 34+ years in teaching, research & administration\n📧 **Email:** subramanyakn@rvce.edu.in";
+        r.buttons = [{l:'About Principal 👨‍🏫',u:'https://rvce.edu.in/about-k_n_subramanya/',i:'👨‍🏫'}, {l:'Vice Principal 👩‍🏫',a:'vice_principal',i:'👩‍🏫'}]; break;
     case 'vice_principal':
         r.text += T("Dr. K. S. Geetha is our Vice-Principal! A powerhouse of academic excellence! 👩‍🏫",
             "The Vice-Principal of RVCE is Dr. K. S. Geetha.\n\nShe is a Professor in the ECE department and handles academic and administrative responsibilities alongside the Principal.\n\nContact: [viceprincipal@rvce.edu.in](mailto:viceprincipal@rvce.edu.in)");
@@ -2918,8 +2930,8 @@ function getResponse(id) {
         r.buttons = [{l:'More Info',u:KB.admissions.url,i:'🌐'}]; break;
     case 'management_quota':
         r.text += T("Management Quota Seats 💰:","Management Quota Information:");
-        r.text += "\n• Admission is based on academic performance and seat availability.\n• Fees: "+KB.admissions.fees;
-        r.buttons = [{l:'Contact Admissions',a:'contact',i:'📞'},{l:'Admissions Page',u:KB.admissions.url,i:'🌐'}]; break;
+        r.text += "\n• Admission is based on academic performance and seat availability.\n• For detailed fee information, please refer to the Admission Circulars.";
+        r.buttons = [{l:'Admission Circulars',u:'https://rvce.edu.in/admission-circulars/',i:'📄'},{l:'Contact Admissions',a:'contact',i:'📞'},{l:'Admissions Page',u:KB.admissions.url,i:'🌐'}]; break;
     case 'cutoffs':
         r.text += T("Rankings & Cutoffs 📊:","KCET/COMEDK Cutoffs:");
         r.text += "\n• "+KB.admissions.cutoffs+"\n• Note: Cutoffs vary significantly by year and category.";
@@ -2933,11 +2945,11 @@ function getResponse(id) {
         r.text += "\n• Direct admission to 2nd year B.E.\n• Mandatory Requirement: DCET (Diploma CET) rank.";
         r.buttons = [{l:'Admissions Page',u:KB.admissions.url,i:'🌐'}]; break;
     case 'fees':
-        r.text += T("Tuition fees depend on the admission quota:<br><br>" + KB.admissions.fees + "<br><br><em>Note: Hostels cost an additional ₹1.1L - ₹1.3L per year.</em>",
-            "Tuition fees depend on the admission quota:\n\n" + KB.admissions.fees);
+        r.text += T("For detailed fee information, please refer to the official Admission Circulars! 📄",
+            "Fee Information: Please check the Admission Circulars for the latest fee structure, payment schedules, and related details.");
         r.buttons = [
-            {l:'Admissions Info',a:'admissions',i:'🎓'},
-            {l:'Fee Payment Circulars',u:'https://rvce.edu.in/academics_and_examinations/fee_payment_circulars/',i:'💰'}
+            {l:'Admission Circulars',u:'https://rvce.edu.in/admission-circulars/',i:'📄'},
+            {l:'Admissions Info',a:'admissions',i:'🎓'}
         ]; break;
     case 'contact':
     case 'address':
@@ -3085,15 +3097,15 @@ function getResponse(id) {
         r.text += T("\n\n🏆 Previous batch (2025): ₹67 LPA highest, 922 offers","\n\nPrevious Year (2025): ₹67 LPA highest package, 262 companies, 922 offers.");
         r.buttons = [{l:'Department-wise Stats',a:'dept_placements_list',i:'📊'}, {l:'Placement Training',u:KB.placements.url,i:'🌐'}]; break;
     case 'placement_director':
-        r.text += T("👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\n📌 **Role:** Heading the Department of Placement & Training at RVCE.\n🌐 **Official Link:** https://rvce.edu.in/placement_and_training/", "👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\nHeading the Placement & Training department at RVCE.\nLink: https://rvce.edu.in/placement_and_training/");
-        r.buttons = [{l:'Placement Stats 💼',a:'placements',i:'💼'},{l:'Faculty & Deans 👨‍🏫',a:'deans_list',i:'👨‍🏫'}]; break;
+        r.text += T("👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\n📌 **Role:** Heading the Department of Placement & Training at RVCE.", "👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\nHeading the Placement & Training department at RVCE.");
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/placement_and_training/',i:'🌐'},{l:'Placement Stats 💼',a:'placements',i:'💼'},{l:'Faculty & Deans 👨‍🏫',a:'deans_list',i:'👨‍🏫'}]; break;
     case 'top_companies':
         r.text += T("RVCE attracts the best in the industry! 🏢 Here are some of our top recruiters:","Top Recruiting Companies at RVCE:");
         r.text += "\n\n• " + KB.placements.recruiters.split(", ").join("\n• ");
         r.buttons = [{l:'Placements',a:'placements',i:'💼'},{l:'Admissions',a:'admissions',i:'🎓'}]; break;
     case 'refund_policy':
-        r.text += T("Refund policy follows AICTE rules! 💸<br><br>• Before start: Full refund (-₹1k)<br>• After start: Only if seat filled<br>• Document retention is BANNED.",
-            "The Fee Refund Policy strictly follows <strong>AICTE Regulations</strong>.<br><br>• <strong>Before Course Start:</strong> Full refund minus a processing fee (max ₹1,00,0).<br>• <strong>After Course Start:</strong> Refundable only if the vacated seat is filled.<br>• <strong>Original Docs:</strong> By AICTE mandate, colleges cannot retain original certificates.");
+        r.text += T("Refund policy follows AICTE rules! 💸<br><br>• Before start: Full refund minus processing fee<br>• After start: Only if seat filled<br>• Document retention is BANNED.",
+            "The Fee Refund Policy strictly follows <strong>AICTE Regulations</strong>.<br><br>• <strong>Before Course Start:</strong> Full refund minus a processing fee.<br>• <strong>After Course Start:</strong> Refundable only if the vacated seat is filled.<br>• <strong>Original Docs:</strong> By AICTE mandate, colleges cannot retain original certificates.");
         break;
     case 'syllabus_1st_sem':
         r.text += T("1st Year Syllabus (VTU 2022 Scheme) 📚<br><br>Physics & Chemistry cycles apply! Key subjects include Math, Electronics, C-Programming.",
@@ -3156,16 +3168,16 @@ function getResponse(id) {
     case 'deans_list':
         r.text += T("Here are the top commanders at RVCE! ⚓\n\n","RVCE Deans & Key Executives:\n\n");
         r.text += "• **Principal:** Dr. K.N. Subramanya\n• **Vice Principal:** Dr. K. S. Geetha\n• **Dean Academics:** Dr. M.V. Renukadevi\n• **Dean Student Affairs:** Dr. B.M. Sagar\n• **Dean R&D:** Dr. M Uttara Kumari\n• **Dean CSE Cluster:** Dr. Ramakanth Kumar P\n• **Dean PG Circuit:** Dr. K Sreelakshmi\n• **Dean PG Non-Circuit:** Dr. Radhakrishna\n• **Dean Skill Dev:** Dr. M Krishna\n• **Dean Placement & Training:** Dr. D. Ranganath\n• **Dean Global Partnerships:** Dr. J R Nataraj";
-        r.buttons = [{l:'HODs List 📚',a:'hods_list',i:'👩‍🏫'}, {l:'Key Executives Page',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}]; break;
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}, {l:'HODs List 📚',a:'hods_list',i:'👩‍🏫'}]; break;
     case 'dean_academics':
         r.text += T("👩‍🏫 **Dean (Academics):** Dr. M.V. Renukadevi\n\n📌 **Role:** Heading Academic Regulations, Curriculum & Evaluation at RVCE.", "👩‍🏫 **Dean (Academics):** Dr. M.V. Renukadevi\n\nHeading Academic Affairs & Curriculum at RVCE.");
-        r.buttons = [{l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Principal 👨‍🏫',a:'principal',i:'👨‍🏫'}]; break;
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Principal 👨‍🏫',a:'principal',i:'👨‍🏫'}]; break;
     case 'dean_student_affairs':
         r.text += T("👨‍🏫 **Dean (Student Affairs):** Dr. B.M. Sagar\n\n📌 **Role:** Heading Student Activities, Welfare & Clubs at RVCE.", "👨‍🏫 **Dean (Student Affairs):** Dr. B.M. Sagar\n\nHeading Student Welfare & Campus Activities at RVCE.");
-        r.buttons = [{l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Cultural Life 🎭',a:'culturalLife',i:'🎭'}]; break;
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Cultural Life 🎭',a:'culturalLife',i:'🎭'}]; break;
     case 'dean_rnd':
         r.text += T("👩‍🔬 **Dean (Research & Development):** Dr. M Uttara Kumari\n\n📌 **Role:** Heading Research Projects, Patents & Grants at RVCE.", "👩‍🔬 **Dean (R&D):** Dr. M Uttara Kumari\n\nHeading Research & Innovation at RVCE.");
-        r.buttons = [{l:'Research & R&D 🔬',a:'research',i:'🔬'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}]; break;
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/research_consulting/',i:'🌐'}, {l:'Research & R&D 🔬',a:'research',i:'🔬'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}]; break;
     case 'hods_list':
         r.text += T("Here are the Heads of Departments (HODs): 📚\n\n","RVCE Head of Departments:\n\n");
         r.text += "• **CSE:** Dr. Shanta Rangaswamy\n• **AIML:** To Be Appointed\n• **ISE:** Dr. Mamatha G S\n• **ECE:** Dr. Ravish Aradhya H V\n• **Mechanical:** Dr. Shanmukha Nagaraj\n• **Civil:** Dr. Anjaneyappa\n• **EEE:** Dr. J N Hemalatha (I/c)\n• **Aerospace:** [Dr. Supreeth R](https://rvce.edu.in/department/ae/dr_r_supreeth/)\n• **Biotech:** Dr. Nagashree N Rao\n• **Chemical:** Dr. Jagadish H Patil\n• **EIE:** Dr. CH. Renumadhavi\n• **ETE:** Dr. Nagamani K\n• **IEM:** Dr. Rajeswara Rao K V S\n• **MCA:** Dr. Jasmine K S\n• **Physics:** Dr. G. Shireesha\n• **Maths:** Dr. Jayalatha G\n• **Chemistry:** Dr. Mahesh R";
@@ -3302,7 +3314,7 @@ function getResponse(id) {
     case 'hostels':
         r.text += T("Home away from home 🏠:","Hostel Facilities:");
         r.text += "\n• Boys: " + KB.hostels.boys + "\n• Girls: " + KB.hostels.girls + "\n• Amenities: " + KB.hostels.amenities;
-        r.buttons = [{l:'See Facilities',u:KB.hostels.url,i:'🌐'}]; break;
+        r.buttons = [{l:'Hostel Facilities Page 🌐',u:'https://rvce.edu.in/facilities/hostel/',i:'🌐'}]; break;
     case 'stats_disambiguation':
         r.text += T("Check out the numbers! 📊","RVCE Statistics:");
         r.buttons = [{l:'Placement Stats',a:'placements',i:'💼'},{l:'NIRF & Rankings',a:'ranking',i:'🏆'},{l:'Upcoming Events 📅',a:'upcoming_events',i:'🔥'}]; break;
@@ -3377,8 +3389,9 @@ function getResponse(id) {
         r.text += T("Official compliance and disclosures. 📄","Mandatory Disclosure:");
         r.buttons = [{l:'View Disclosure',u:'https://rvce.edu.in/mandatory-disclosure/',i:'📄'}]; break;
     case 'calendar_events':
-        r.text += T("Don't miss out on important dates! 📅","Academic Calendar:");
-        r.buttons = [{l:'Academic Calendar',u:'https://rvce.edu.in/calendar-of-events/',i:'📅'}]; break;
+        r.text += T("Upcoming Events & NEWS! 📅\n\nGet ready for what's next! Our Upcoming Events section is constantly updated with exciting technical talks, cultural fests, and campus activities designed to challenge, connect and inspire. Don't miss a beat!",
+            "### 📅 Upcoming Events & NEWS\n\nGet ready for what's next—our Upcoming Events section is constantly updated with exciting technical talks, cultural fests, and campus activities designed to challenge, connect, and inspire. Don't miss a beat!\n\nCheck the official RVCE Events page for the latest updates.");
+        r.buttons = [{l:'Events Page 📅',u:'https://rvce.edu.in/events/',i:'📅'},{l:'Academic Calendar',u:'https://rvce.edu.in/calendar-of-events/',i:'🗓️'}]; break;
     case 'sports_simple':
         r.text += T("Sporty campus! 🏅","Sports Facilities:");
         r.text += "\n• 400m athletic track\n• Cricket & Football grounds\n• Basketball, Volleyball, Badminton courts\n• Gymnatorium with modern equipment\n• Table Tennis, Chess";
@@ -3417,9 +3430,40 @@ function getResponse(id) {
         r.text += "• 2026 Highest Package: " + KB.placements2026.maxSalary + "\n• Avg Package: " + KB.placements2026.avgSalary + "\n• Offers so far: " + KB.placements2026.offers + "\n• " + KB.placements2026.companies + "\n• Top recruiters: Microsoft, Google, Amazon, Samsung\n• NAAC A+ accreditation";
         r.buttons = [{l:'Placements',a:'placements',i:'💼'},{l:'Fee Structure',a:'fees',i:'💰'}]; break;
     case 'girls_hostel':
-        r.text += T("Girls hostel deets! 🏠 Safe & well-managed!","Girls Hostel Information:");
-        r.text += "\n• DJ Block (On-campus): " + KB.hostelDetails.girlsBlocks.djBlock + "\n• Krishna Garden (Off-campus, Pattanagere): " + KB.hostelDetails.girlsBlocks.krishnaGarden + "\n• Fees (Triple): " + KB.hostelDetails.fees.tripleSharing + "\n• Fees (Double): " + KB.hostelDetails.fees.doubleSharing + "\n• Facilities: " + KB.hostelDetails.facilities + "\n• Residential wardens & CCTV in all blocks\n• Strict curfew timings enforced for safety";
-        r.buttons = [{l:'Safety Info',a:'safety',i:'🛡️'},{l:'All Hostels',a:'hostels',i:'🏠'}]; break;
+        r.text += T("Girls Hostel Facilities & Details 👧\n\n📌 **On-Campus Block:** Diamond Jubilee (DJ) Block (Deputy Warden: Dr. Sudha Kamath M K)\n📌 **Off-Campus Block:** Krishna Garden Block (Pattanagere)\n✨ **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Room & Strictly Veg Mess\n⏰ **Curfew:** Strict curfew timings for safety",
+            "### 👧 Girls Hostel Facilities & Information\n\n• **On-Campus Block:** Diamond Jubilee (DJ) Block (Deputy Warden: Dr. Sudha Kamath M K)\n• **Off-Campus Block:** Krishna Garden Block (Pattanagere)\n• **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Room & Strictly Veg Mess\n• **Safety:** Residential Wardens & Strict Curfew Timings");
+        r.buttons = [
+            {l:'Girls Hostel Page 🌐', u:'https://rvce.edu.in/facilities/hostel/', i:'🌐'},
+            {l:'Boys Hostel 👦', a:'boys_hostel', i:'👦'},
+            {l:'Mess Info 🍽️', a:'mess', i:'🍽️'},
+            {l:'Safety Info 🛡️', a:'safety', i:'🛡️'}
+        ]; break;
+    case 'boys_hostel':
+        r.text += T("Boys Hostel Facilities & Details 👦\n\n📌 **Blocks:** Chamundi, Cauvery, Sir MV, Krishna Blocks\n✨ **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Rooms, Sports Gym & Strictly Veg Mess",
+            "### 👦 Boys Hostel Facilities & Information\n\n• **Hostel Blocks:** Chamundi, Cauvery, Sir MV, Krishna Blocks\n• **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Rooms, Sports Gym & Strictly Veg Mess");
+        r.buttons = [
+            {l:'Boys Hostel Page 🌐', u:'https://rvce.edu.in/facilities/hostel/', i:'🌐'},
+            {l:'Girls Hostel 👧', a:'girls_hostel', i:'👧'},
+            {l:'Mess Info 🍽️', a:'mess', i:'🍽️'},
+            {l:'Main Menu 📋', a:'menu', i:'📋'}
+        ]; break;
+    case 'environment_sustainability':
+        r.text += T("Environment & Sustainability at RVCE 🌿\n\nA serene, eco-friendly campus built with sustainability at its core. Our infrastructure features advanced systems including solar power, rainwater harvesting and wastewater recycling.",
+            "### 🌿 Environment & Sustainability at RVCE\n\nA serene, eco-friendly campus built with sustainability at its core. Our infrastructure features advanced systems designed to minimise environmental impact while maximising efficiency.\n\nExplore the key features that make our campus a model of modern, sustainable education, including:\n• **Solar Power**\n• **Rainwater Harvesting**\n• **Wastewater Recycling (Sewage Treatment)**");
+        r.buttons = [
+            {l:'Environment & Sustainability Page 🌐', u:'https://rvce.edu.in/facilities/environment_and_sustainability/', i:'🌐'},
+            {l:'Campus Infrastructure 🏢', a:'facilities', i:'🏢'},
+            {l:'Main Menu 📋', a:'menu', i:'📋'}
+        ]; break;
+    case 'iqac':
+        r.text += T("IQAC (Internal Quality Assurance Cell) Reports & Guidelines! 📋\n\nThe IQAC portal provides access to structural details, AQAR reports, policies, and various audit reports of RVCE.",
+            "### 📋 Internal Quality Assurance Cell (IQAC)\n\nThe IQAC portal contains official reports and policies for RVCE, including:");
+        r.text += "\n\n• **Structure:** Structure of Internal Quality Assurance Cell (IQAC)\n• **Reports:** AQAR Reports\n• **Guidelines:** Policy and Guidelines\n• **Audits & Feedback:** Student Feedback Reports, Academic Audit Reports, and Examination Audit Reports";
+        r.buttons = [
+            {l:'Official IQAC Page 🌐', u:'https://rvce.edu.in/about_us/internal_quality_assurance_cell_iqac/', i:'🌐'},
+            {l:'Accreditation 💎', a:'accreditation', i:'💎'},
+            {l:'Main Menu 📋', a:'menu', i:'📋'}
+        ]; break;
     case 'nearby':
         r.text += T("What's around RVCE? Plenty! 📍","Nearby Areas & Amenities:");
         r.text += "\n• Areas: " + KB.nearby.areas + "\n• Food: " + KB.nearby.food + "\n• Shopping: " + KB.nearby.shopping + "\n• Hospitals: " + KB.nearby.hospitals + "\n• Connectivity: " + KB.nearby.connectivity;

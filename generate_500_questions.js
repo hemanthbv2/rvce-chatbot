@@ -3,7 +3,7 @@ const fs = require('fs');
 const depts = ['CSE', 'ISE', 'AIML', 'ECE', 'EEE', 'Mechanical', 'Civil', 'Biotech', 'Chemical', 'Aerospace', 'EIE', 'ETE', 'IEM', 'MCA', 'CSDS', 'CSCY'];
 const deptSlang = ['cs', 'ise', 'aiml', 'ec', 'eee', 'mech', 'civil', 'bt', 'chem', 'aero', 'ei', 'ete', 'iem', 'mca', 'ds', 'cyber'];
 const prefixes = [
-    '', 'can you tell me ', 'please show me ', 'i want to know ', 'what is ', 'how about ', 
+    '', 'can you tell me ', 'please show me ', 'i want to know ', 'what is ', 'how about ',
     'pls give details of ', 'could u tell me ', 'whats the ', 'tell me ', 'give info on ',
     'hey chatbot ', 'sir please tell ', 'im curious about '
 ];
@@ -95,7 +95,7 @@ const questionList = Array.from(generated);
 
 // Format with 3 evaluation checkboxes per question:
 // [ ] Correct  |  [ ] Wrong Answer  |  [ ] No Info
-const txtContent = questionList.map((q, i) => 
+const txtContent = questionList.map((q, i) =>
     `${i + 1}. Query: "${q}"\n   [ ] Correct  |  [ ] Wrong Answer  |  [ ] No Info / Fallback\n`
 ).join('\n');
 
@@ -110,7 +110,7 @@ Use this interactive checklist to evaluate each query response. Mark:
 
 ---
 
-` + questionList.map((q, i) => 
+` + questionList.map((q, i) =>
     `### Question ${i + 1}\n**Query:** \`${q}\`  \n- [ ] ✅ Correct  \n- [ ] ❌ Wrong Answer  \n- [ ] ❓ No Info / Fallback\n`
 ).join('\n---\n\n');
 

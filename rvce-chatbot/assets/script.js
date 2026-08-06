@@ -5,6 +5,39 @@ function startRVCEChatbot() {
 let tone = 'pro';
 let chatOpen = false;
 
+/* =============== NLP TOKENIZER & PROCESSOR =============== */
+const STOP_WORDS = new Set([
+    // Only remove words that are 3+ letters and are NEVER department codes or keywords
+    "what", "the", "can", "you", "tell", "about",
+    "show", "give", "want", "know", "how", "does", "are",
+    "for", "with", "but", "because", "curious", "whats", "info", "details", "pls", "plz", "urgent",
+    "please", "hello", "hey", "sir", "madam", "could", "would", "should"
+    // INTENTIONALLY EXCLUDED (are department codes or contextually meaningful):
+    // "is" (ISE), "me" (Mechanical), "or" (used in phrases), "at", "in", "on", "an",
+    // "a", "i", "do", "and", "so", "of", "to", "hi"
+]);
+
+function tokenize(text) {
+    if (!text) return [];
+    return text.toLowerCase()
+               .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'\[\]]/g, ' ')
+               .split(/\s+/)
+               .filter(word => word.trim().length > 0);
+}
+
+function removeStopWords(tokens) {
+    return tokens.filter(word => !STOP_WORDS.has(word));
+}
+
+function processNLPInput(input) {
+    const tokens = tokenize(input);
+    const cleanTokens = removeStopWords(tokens);
+    return {
+        tokens: cleanTokens,
+        cleanString: cleanTokens.join(' ')
+    };
+}
+
 /* =============== CONTENT MODERATION =============== */
 const BLOCKED = {
     abusive: [
@@ -428,7 +461,9 @@ const KB = {
             {
                 n:"Aerospace Engineering (AE)",
                 c:"ae", 
-                u:"https://rvce.edu.in/department/ae/department-of-aerospace-engineering/", 
+                u:"https://rvce.edu.in/department/ae/department-of-aerospace-engineering/",
+                intake: "60",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. R Supreeth",
                 hod_url: "https://rvce.edu.in/department/ae/dr_r_supreeth/",
                 info: "Welcome to the Department of Aerospace Engineering. Established in 2015, the Department has evolved into one of the country’s most prestigious destinations for undergraduate Aerospace Programmes.",
@@ -445,8 +480,10 @@ const KB = {
             {
                 n:"AI & Machine Learning (AIML)",
                 c:"aiml", 
-                u:"https://rvce.edu.in/department/ai_ml/main_department/", 
-                hod:"Dr. B. Sathish Babu",
+                u:"https://rvce.edu.in/department/ai_ml/main_department/",
+                intake: "180",
+                accreditation: "Not specified/New", 
+                hod:"To Be Appointed",
                 info: "Established in 2021, the programme builds a strong foundation in computer science engineering with focused training in Artificial Intelligence, Machine Learning, Deep Learning, and Data Science.",
                 about: "https://rvce.edu.in/department/ai_ml/about_the_department/",
                 syllabus: "https://rvce.edu.in/academics_and_examinations/rvce_scheme_syllabus/#ug",
@@ -456,14 +493,16 @@ const KB = {
                 facilities: "https://rvce.edu.in/department/ai_ml/facilities/",
                 research: "https://rvce.edu.in/department/ai_ml/research/",
                 campus_diaries: "https://rvce.edu.in/department/ai_ml/campus_diaries/",
-                hod_message: "https://rvce.edu.in/department/ai_ml/dr_b_sathish_babu_hod_message/",
+                hod_message: "",
                 academic_planning: "https://rvce.edu.in/department/ai_ml/academic_planning/",
                 collab: "https://rvce.edu.in/department/ai_ml/collaboration-and-networking/"
             },
             {
                 n:"Biotechnology (BT)",
                 c:"bt", 
-                u:"https://rvce.edu.in/department/biotechnology/department_of_biotechnology/", 
+                u:"https://rvce.edu.in/department/biotechnology/department_of_biotechnology/",
+                intake: "60",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. Nagashree N Rao",
                 info: "At the crossroads of science and innovation, the Department of Biotechnology (est. 2002) blends theoretical knowledge with practical experience, offering B.E., M.Tech., and Ph.D. programmes with advanced research facilities.",
                 about: "https://rvce.edu.in/department/biotechnology/about_the_department/",
@@ -482,7 +521,9 @@ const KB = {
             {
                 n:"Chemical Engineering (CH)",
                 c:"ch", 
-                u:"https://rvce.edu.in/department/chemical_engineering/main_dept/", 
+                u:"https://rvce.edu.in/department/chemical_engineering/main_dept/",
+                intake: "40",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. Jagadish H Patil",
                 info: "Established in 1982, the Department of Chemical Engineering is a leader in academic and research excellence, holding a 6-year NBA accreditation. It offers B.E., M.Sc. (Engg) by Research, and Ph.D. programmes.",
                 about: "https://rvce.edu.in/department/chemical_engineering/about_dept/",
@@ -516,7 +557,9 @@ const KB = {
             {
                 n:"Civil Engineering (CV)",
                 c:"cv", 
-                u:"https://rvce.edu.in/department/civil_engineering/department-of-civil-engineering/", 
+                u:"https://rvce.edu.in/department/civil_engineering/department-of-civil-engineering/",
+                intake: "60",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. Anjaneyappa",
                 info: "Established in 1963, the department offers NBA-accredited B.E. in Civil Engineering and M.Tech in Structural Engineering & Highway Technology. It is a recognized VTU research centre.",
                 about: "https://rvce.edu.in/department/civil_engineering/about-the-department/",
@@ -534,7 +577,9 @@ const KB = {
             {
                 n:"Computer Science & Engg (CSE)",
                 c:"cs", 
-                u:"https://rvce.edu.in/department/cse/cse_main/", 
+                u:"https://rvce.edu.in/department/cse/cse_main/",
+                intake: "360",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. Shanta Rangaswamy",
                 info: "Established in 1984, the CSE department is the most sought-after at RVCE. It offers NBA-accredited B.E., M.Tech. (CSE and CNE), and Ph.D. programs with state-of-the-art labs and stellar placements.",
                 about: "https://rvce.edu.in/department/cse/about_the_department/",
@@ -555,7 +600,9 @@ const KB = {
             {
                 n:"CSE (AI & ML) (CSAIML)",
                 c:"csaiml", 
-                u:"https://rvce.edu.in/department/cse/cse_main/", 
+                u:"https://rvce.edu.in/department/cse/cse_main/",
+                intake: "180",
+                accreditation: "Not specified/New", 
                 hod:"Dr. Shanta Rangaswamy (Under CSE Dept)",
                 info: "A specialized B.E. track under the CSE department focusing on Artificial Intelligence and Machine Learning.",
                 about: "https://rvce.edu.in/department/cse/about_the_department/",
@@ -567,7 +614,9 @@ const KB = {
             {
                 n:"CSE (Cyber Security) (CSCY)",
                 c:"cscy", 
-                u:"https://rvce.edu.in/department/cse/cse_main/", 
+                u:"https://rvce.edu.in/department/cse/cse_main/",
+                intake: "60",
+                accreditation: "Not specified/New", 
                 hod:"Dr. Shanta Rangaswamy (Under CSE Dept)",
                 info: "A specialized B.E. track under the CSE department focusing on Cyber Security and defensive computing.",
                 about: "https://rvce.edu.in/department/cse/about_the_department/",
@@ -579,7 +628,9 @@ const KB = {
             {
                 n:"CSE (Data Science) (CSDS)",
                 c:"csds", 
-                u:"https://rvce.edu.in/department/cse/cse_main/", 
+                u:"https://rvce.edu.in/department/cse/cse_main/",
+                intake: "60",
+                accreditation: "Not specified/New", 
                 hod:"Dr. Shanta Rangaswamy (Under CSE Dept)",
                 info: "A specialized B.E. track under the CSE department focusing on Data Science, Big Data, and Analytics.",
                 about: "https://rvce.edu.in/department/cse/about_the_department/",
@@ -591,7 +642,9 @@ const KB = {
             {
                 n:"Electrical & Electronics (EEE)",
                 c:"ee", 
-                u:"https://rvce.edu.in/department/eee/department-of-electrical-and-electronics-engineering/", 
+                u:"https://rvce.edu.in/department/eee/department-of-electrical-and-electronics-engineering/",
+                intake: "60",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. J N Hemalatha (I/c)",
                 info: "Since 1963, the EEE department has been a hub of academic excellence. It offers B.E. and M.Tech in Power Electronics, focusing on renewable energy, smart grids, and industrial automation.",
                 about: "https://rvce.edu.in/department/eee/about_the_department/",
@@ -612,7 +665,9 @@ const KB = {
             {
                 n:"Electronics & Communication (ECE)",
                 c:"ec", 
-                u:"https://rvce.edu.in/department/ece/department_of_electronics_and_communication/", 
+                u:"https://rvce.edu.in/department/ece/department_of_electronics_and_communication/",
+                intake: "240",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. H. V. Ravish Aradhya",
                 info: "Established in 1972, the department offers state-of-the-art degrees with a 6-year NBA accreditation (2022-2028) and hosts multiple Centres of Excellence in VLSI, Autonomous Vehicles, and Materials Fabrication.",
                 about: "https://rvce.edu.in/department/ece/about_department/",
@@ -635,12 +690,15 @@ const KB = {
             {
                 n:"Electronics & Instrumentation (EIE)",
                 c:"ei", 
-                u:"https://rvce.edu.in/department/eim/main_dept/", 
+                u:"https://rvce.edu.in/department/eim/main_dept/",
+                intake: "60",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. CH. Renumadhavi",
                 info: "Established in 1981, the department offers an NBA-accredited curriculum that is regularly updated to meet industry demands, featuring modern laboratories for hands-on learning and innovation in automation and control.",
                 about: "https://rvce.edu.in/department/eim/about_dept/",
                 syllabus: "https://rvce.edu.in/academics_and_examinations/rvce_scheme_syllabus/#ug",
                 faculty: "https://rvce.edu.in/department/eim/faculty/",
+                placement: "https://rvce.edu.in/department/eim/placement/",
                 labs: "https://rvce.edu.in/department/eim/laboratories/",
                 research: "https://rvce.edu.in/department/eim/research/",
                 rd_labs: "https://rvce.edu.in/department/eim/rd/",
@@ -653,7 +711,9 @@ const KB = {
             {
                 n:"Electronics & Telecom (ETE)",
                 c:"et", 
-                u:"https://rvce.edu.in/department/etc/main_department/", 
+                u:"https://rvce.edu.in/department/etc/main_department/",
+                intake: "60",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. Nagamani K",
                 info: "Established in 1992, the department offers a comprehensive educational experience emphasizing hands-on design in hardware, software, embedded systems, networks, and protocols.",
                 about: "https://rvce.edu.in/department/etc/about_the_department/",
@@ -673,7 +733,9 @@ const KB = {
             {
                 n:"Industrial Engg & Mgmt (IEM)",
                 c:"im", 
-                u:"https://rvce.edu.in/department/iem/b_e_industrial_engineering_and_management/", 
+                u:"https://rvce.edu.in/department/iem/b_e_industrial_engineering_and_management/",
+                intake: "60",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. Rajeswara Rao K V S",
                 info: "Established in 1980, the department integrates engineering and management to align with industry needs. It offers an NBA-accredited B.E. programme and maintains close associations with professional societies like IIIE, ORSI, and IIMM.",
                 about: "https://rvce.edu.in/department/iem/about_the_department/",
@@ -688,7 +750,9 @@ const KB = {
             {
                 n:"Information Science & Engg (ISE)",
                 c:"is", 
-                u:"https://rvce.edu.in/department/ise/department--of-information-science-and-engineering/", 
+                u:"https://rvce.edu.in/department/ise/department--of-information-science-and-engineering/",
+                intake: "135",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. G. S. Mamatha",
                 info: "Offers a dynamic curriculum focused on AI, IoT, Cloud Computing and Cybersecurity. Supported by a VTU-recognised research centre and partnerships with Microsoft, Nvidia and HP.",
                 about: "https://rvce.edu.in/department/ise/about_dept/",
@@ -722,12 +786,15 @@ const KB = {
             {
                 n:"Mechanical Engineering (ME)",
                 c:"me", 
-                u:"https://rvce.edu.in/department/me/department_of_mechanical_engineering/", 
+                u:"https://rvce.edu.in/department/me/department_of_mechanical_engineering/",
+                intake: "120",
+                accreditation: "NBA Accredited", 
                 hod:"Dr. Shanmukha Nagaraj",
                 info: "Dedicated to fostering innovation and excellence in Mechanical Engineering. Offers premier education and cultivates cutting-edge research in Design, Materials, Thermal and Manufacturing, strengthened by robust industry collaborations.",
                 about: "https://rvce.edu.in/department/me/about_the_department/",
                 syllabus: "https://rvce.edu.in/academics_and_examinations/rvce_scheme_syllabus/#ug",
                 faculty: "https://rvce.edu.in/department/me/faculty/",
+                placement: "https://rvce.edu.in/department/me/placement/",
                 labs: "https://rvce.edu.in/department/me/laboratories/",
                 facilities: "https://rvce.edu.in/department/me/facilities/",
                 research: "https://rvce.edu.in/department/me/research/",
@@ -826,6 +893,123 @@ const KB = {
         avgSalary: "~₹11.5 LPA (2024 Avg)",
         companies: "249 companies participated in 2024 drive",
         offers: "917 total offers with 75% placement rate"
+    },
+    'iem': {
+        name: "Industrial Engineering and Management",
+        ug: {
+            ongoing: {
+                name: "B.E. Industrial Engineering and Management (2025-26)",
+                companies: 12, offers: 30, students: 27,
+                avg: "12.46 LPA", max: "21.45 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 30, offers: 51, students: 46, avg: "7.68 LPA", max: "21.45 LPA" },
+                { name: "2023-24", companies: 30, offers: 53, students: 51, avg: "8.39 LPA", max: "20.00 LPA" },
+                { name: "2022-23", companies: 35, offers: 49, students: 49, avg: "9.06 LPA", max: "18.99 LPA" },
+                { name: "2021-22", companies: 38, offers: 66, students: 42, avg: "9.03 LPA", max: "14.95 LPA" }
+            ]
+        }
+    },
+    'mca': {
+        name: "Master of Computer Applications",
+        pg: {
+            ongoing: {
+                name: "Master of Computer Applications (2025-26)",
+                companies: 3, offers: 21, students: 22,
+                avg: "4.00 LPA", max: "11.59 LPA"
+            },
+            full: [
+                { name: "2025-26 (Timeline)", companies: 24, offers: 62, students: 59, avg: "9.00 LPA", max: "20.00 LPA" },
+                { name: "2024-25", companies: 35, offers: 80, students: 80, avg: "8.94 LPA", max: "20.00 LPA" },
+                { name: "2023-24", companies: 52, offers: 132, students: 95, avg: "8.29 LPA", max: "25.00 LPA" },
+                { name: "2021-22", companies: 56, offers: 146, students: 102, avg: "10.00 LPA", max: "28.00 LPA" },
+                { name: "2020-21", companies: 85, offers: 274, students: 210, avg: "7.50 LPA", max: "20.00 LPA" }
+            ]
+        }
+    },
+    'me': {
+        name: "Mechanical Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Mechanical Engineering (2025-26)",
+                companies: 39, offers: 86, students: 80,
+                avg: "9.22 LPA", max: "18.33 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 44, offers: 88, students: 82, avg: "8.21 LPA", max: "18.33 LPA" },
+                { name: "2023-24", companies: 46, offers: 78, students: 70, avg: "9.07 LPA", max: "18.00 LPA" },
+                { name: "2022-23", companies: 60, offers: 113, students: 85, avg: "8.35 LPA", max: "16.00 LPA" },
+                { name: "2021-22", companies: 45, offers: 112, students: 69, avg: "9.05 LPA", max: "18.00 LPA" }
+            ]
+        },
+        pg: {
+            ongoing: [
+                {
+                    name: "M.Tech. Product Design And Manufacturing (2025-26)",
+                    companies: 6, offers: 8, students: 8, avg: "7.09 LPA", max: "14.00 LPA"
+                },
+                {
+                    name: "M.Tech. Machine Design (2025-26)",
+                    companies: 8, offers: 7, students: 7, avg: "6.02 LPA", max: "8.00 LPA"
+                }
+            ],
+            full: [
+                { name: "Product Design & Manufacturing (2024-25)", companies: 6, offers: 8, students: 8, avg: "7.09 LPA", max: "14.00 LPA" },
+                { name: "Product Design & Manufacturing (2022-23)", companies: 12, offers: 23, students: 23, avg: "6.82 LPA", max: "10.00 LPA" },
+                { name: "Product Design & Manufacturing (2021-22)", companies: 14, offers: 20, students: 20, avg: "6.45 LPA", max: "12.00 LPA" },
+
+                { name: "Machine Design (2024-25)", companies: 8, offers: 7, students: 7, avg: "6.02 LPA", max: "8.00 LPA" },
+                { name: "Machine Design (2022-23)", companies: 10, offers: 17, students: 17, avg: "6.44 LPA", max: "20.00 LPA" },
+                { name: "Machine Design (2021-22)", companies: 12, offers: 15, students: 15, avg: "5.83 LPA", max: "12.00 LPA" }
+            ]
+        }
+    },
+    'mca': {
+        name: "Master of Computer Applications",
+        pg: {
+            ongoing: {
+                name: "Master of Computer Applications (2025-26)",
+                companies: 3, offers: 21, students: 22,
+                avg: "4.00 LPA", max: "11.59 LPA"
+            },
+            full: [
+                { name: "2025-26 (Timeline)", companies: 24, offers: 62, students: 59, avg: "9.00 LPA", max: "20.00 LPA" },
+                { name: "2024-25", companies: 35, offers: 80, students: 80, avg: "8.94 LPA", max: "20.00 LPA" },
+                { name: "2023-24", companies: 52, offers: 132, students: 95, avg: "8.29 LPA", max: "25.00 LPA" },
+                { name: "2021-22", companies: 56, offers: 146, students: 102, avg: "10.00 LPA", max: "28.00 LPA" },
+                { name: "2020-21", companies: 85, offers: 274, students: 210, avg: "7.50 LPA", max: "20.00 LPA" }
+            ]
+        }
+    },
+    'et': {
+        name: "Electronics And Telecommunication Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Electronics And Telecommunication Engineering (2025-26)",
+                companies: 300, offers: 61, students: 47,
+                avg: "11.128 LPA", max: "50.00 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 41, offers: 53, students: 49, avg: "9.67 LPA", max: "39.00 LPA" },
+                { name: "2023-24", companies: "N/A", offers: 45, students: 60, avg: "75% Placed", max: "12 Higher Studies" },
+                { name: "2022-23", companies: "N/A", offers: 39, students: 64, avg: "61% Placed", max: "0 Higher Studies" },
+                { name: "2021-22", companies: "N/A", offers: 48, students: 60, avg: "80% Placed", max: "0 Higher Studies" },
+                { name: "2020-21", companies: "N/A", offers: 47, students: 54, avg: "87% Placed", max: "1 Higher Studies" }
+            ]
+        },
+        pg: {
+            ongoing: {
+                name: "M.Tech. Digital Communication Engineering (2025-26)",
+                companies: 1, offers: 1, students: 1,
+                avg: "15.00 LPA", max: "15.00 LPA"
+            },
+            full: [
+                { name: "2024-25*", companies: 1, offers: 1, students: 1, avg: "15.00 LPA", max: "15.00 LPA" },
+                { name: "2023-24", companies: 12, offers: 8, students: 8, avg: "7.50 LPA", max: "10.00 LPA" },
+                { name: "2021-22", companies: 12, offers: 11, students: 11, avg: "7.09 LPA", max: "18.60 LPA" },
+                { name: "2020-21", companies: 16, offers: 22, students: 22, avg: "8.22 LPA", max: "21.50 LPA" }
+            ]
+        }
     },
     hostelDetails: {
         boysBlocks: { chamundi: "1st year UG", cauvery: "2nd & 3rd year UG", cauveryAnnex: "1st year UG", sirMV: "Final year UG & PG" },
@@ -931,7 +1115,6 @@ const KB = {
             { n: "Dr. Ekta Jain", u: "https://rvce.edu.in/department/ae/ekta-jain/", d: "Assistant Professor", e: "Not specified" }
         ],
         aiml: [
-            { n: "Dr. B. Sathish Babu", u: "https://rvce.edu.in/department/ai_ml/dr_b_sathish_babu_bio/", d: "Professor and HoD", e: "Teaching: 30 Years" },
             { n: "Dr. Vijayalakshmi M N", u: "https://rvce.edu.in/department/ai_ml/dr_vijayalakshmi_m_n/", d: "Associate Professor", e: "25 years" },
             { n: "Dr. S. Anupama Kumar", u: "https://rvce.edu.in/department/ai_ml/dr_s_anupama_kumar/", d: "Associate Professor", e: "25 years" },
             { n: "Dr. Narasimha Swamy S", u: "https://rvce.edu.in/department/ai_ml/dr_narasimha_swamy_s/", d: "Assistant Professor", e: "Teaching: 4 years" },
@@ -1261,11 +1444,37 @@ const KB = {
 
 /* =============== INPUT SANITIZATION =============== */
 function sanitize(input) {
+    // 0. Special condition for CSE specializations and specific overlaps
+    input = input.replace(/\b(?:cse|cs)\s+(aiml|ai\s*ml|ai|ds|data\s*science|cy|cyber|cyber\s*security)\b/gi, '$1');
+    input = input.replace(/\bsustainability\s+events?\b/gi, 'sustainability');
+    input = input.replace(/\bmou's\b/gi, 'mous');
+
     // 1. Remove dots explicitly to handle c.s.e -> cse
     let cleaned = input.replace(/\./g, '');
-    // 2. Remove other special chars but keep underscores
-    cleaned = cleaned.replace(/[^a-zA-Z0-9_\s]/g, ' ');
-    // 3. Remove extra spaces
+    // 2. Remove other special chars but keep underscores and hyphens (vital for years like 2024-25)
+    cleaned = cleaned.replace(/[^a-zA-Z0-9_\-\s]/g, ' ').toLowerCase();
+    
+    // 3. Expand common department abbreviations (excluding common English verbs/words like 'is' or 'me')
+    const deptAbbr = {
+        'cs': 'cse', 'cse': 'cse',
+        'ec': 'ece', 'ece': 'ece',
+        'mech': 'mechanical',
+        'cv': 'civil',
+        'ee': 'eee', 'eee': 'eee',
+        'ise': 'ise',
+        'ae': 'aerospace', 'aero': 'aerospace',
+        'ch': 'chemical', 'chem': 'chemical',
+        'bt': 'biotech', 'biotech': 'biotechnology',
+        'iem': 'industrial',
+        'ei': 'instrumentation', 'eie': 'instrumentation',
+        'et': 'telecommunication', 'ete': 'telecommunication',
+        'aiml': 'artificial intelligence'
+    };
+    
+    // Replace whole words
+    cleaned = cleaned.split(/\s+/).map(w => deptAbbr[w] || w).join(' ');
+
+    // 4. Remove extra spaces
     return cleaned.replace(/\s+/g, ' ').trim();
 }
 
@@ -1275,8 +1484,9 @@ const QA = [
     {k:['hi','hello','hey','hii','hola','good morning','good evening','good afternoon','Namaste','yo','sup','howdy','wassup','yoo','heyo','heyy','hellooo','helloo','namaskara'],id:'greet',p:5},
     {k:['bye','goodbye','thank you','thanks','thats all','see you','cya','take care','ok bye','okay bye','good night','tata','laterz','peace out','im out','gtg','gotta go','kbye'],id:'bye',p:5},
     {k:['circular','circulars','announcement','announcements','latest news','recent notice','notices','update','notification','notifications'],id:'circulars',p:1},
+    {k:['career','careers','future','jobs','roles','opportunities','scope','prospects','options'],id:'career_options_menu',p:4},
     // P1: Specific topics
-    {k:['hostel','hostels','accommodation','dorm','dormitory','boys hostel','girls hostel','hostel fee','hostel room','single room','shared room','hostel mess','staying','where to stay','stay at rvce','pg','paying guest','hostel life','hstl','hostl'],id:'hostels',p:1},
+    {k:['hostel','hostels','accommodation','dorm','dormitory','hostel fee','hostel room','single room','shared room','hostel mess','staying','where to stay','stay at rvce','pg','paying guest','hostel life','hstl','hostl'],id:'hostels',p:1},
     {k:['mess','mess food','hostel food','mess menu','breakfast','lunch','dinner','food in hostel','mess charges','mess committee'],id:'mess',p:1},
     {k:['transport','how to reach','bmtc','bus route','kengeri metro','commute to rvce','distance from','reach rvce','reach the college','how to get there','travel to rvce','cab to rvce','auto to rvce','ola to rvce','uber to rvce','metro station','nearest metro'],id:'transport',p:1},
     {k:['wifi','internet','wi fi','connectivity','broadband','net access','wifi password','net speed','slow internet'],id:'wifi',p:1},
@@ -1299,6 +1509,9 @@ const QA = [
     {k:['vice principal','vp','vice-principal','who is vice principal','about vice principal','tell me about vice principal','dr k s geetha','geetha mam'],id:'vice_principal',p:1},
     {k:['hod','head of department','dean','deans','faculty','teachers','professors','who is the hod','list of hods','hods','who is hod','department head','heads','teaching staff'],id:'faculty',p:1.5},
     {k:['deans list','all deans','dean list','executive committee','key executives'],id:'deans_list',p:1},
+    {k:['dean academics','academic dean','dean of academics','who is dean academics'],id:'dean_academics',p:0.5},
+    {k:['dean student affairs','student affairs dean','dean of student affairs','who is dean student affairs'],id:'dean_student_affairs',p:0.5},
+    {k:['dean rnd','dean r and d','dean research','dean of research','who is dean research','research dean'],id:'dean_rnd',p:0.5},
     {k:['hods list','list of hods','all hods','hod list','head of departments','all heads'],id:'hods_list',p:1},
     {k:['coe','coes','centres of excellence','centers of excellence','coe list','research centres','research centers','innovation hubs','all coes','list of coes'],id:'centres_of_excellence',p:1},
     // Specific COE search intents (higher priority for specific names)
@@ -1347,6 +1560,7 @@ const QA = [
     {k:['autonomous','autonomy','own syllabus','own exam','autonomous status','is rvce autonomous'],id:'autonomous',p:1},
     {k:['stat','stats','statistic','statistics','figure','figures','data'],id:'stats_disambiguation',p:0.4},
     {k:['number','numbers','num','contact number','phone number','official number','calling','mobile'],id:'numbers_info',p:2.5},
+    {k:['placement director','placement officer','dean placement','placement dean','head of placement','placement cell head','who is placement director','placement incharge','placement head','director of placement','placement officer name'],id:'placement_director',p:0.2},
     // Department-specific (with short codes + college slang)
     {k:['computer science','cse','cs','cs department','computer science engineering','cse department','comps','comp sci','cs branch','cs dept'],id:'dept_cs',p:1},
     {k:['artificial intelligence','aiml','ai ml','machine learning','ai department','ai branch','ml branch','ai and ml'],id:'dept_aiml',p:1},
@@ -1398,7 +1612,9 @@ const QA = [
     {k:['safe','safety','is it safe','is my child safe','is my daughter safe','security','cctv','campus security','safe for girls','is rvce safe','how safe','secure','campus safety','child safety','girl safety','daughter safety','women safety'],id:'safety',p:0.8},
     {k:['attendance','attendance rules','attendance requirement','minimum attendance','85 percent','attendance mandatory','bunking','bunk','proxy','absent','leave policy','attendance policy','how strict','strict attendance','will my child attend'],id:'attendance',p:1},
     {k:['roi','return on investment','worth the fees','worth the money','value for money','is it worth','paisa vasool','fee worth','investment','good investment','waste of money','expensive but good','justification of fees'],id:'roi',p:1},
-    {k:['girls hostel','girls hostel rules','girls curfew','girls safety','female hostel','women hostel','hostel for girls','daughter hostel','curfew','curfew time','hostel timings','hostel curfew','in time','girls hostel fees','separate hostel','hostel rules for girls'],id:'girls_hostel',p:0.7},
+    {k:['girls hostel','girls hostel rules','girls curfew','girls safety','female hostel','women hostel','hostel for girls','daughter hostel','curfew','curfew time','hostel timings','hostel curfew','in time','girls hostel fees','separate hostel','hostel rules for girls','girls hostel facilities'],id:'girls_hostel',p:0.7},
+    {k:['boys hostel','boys hostel rules','boys hostel fee','male hostel','hostel for boys','boys accommodation','boys hostel single room','boys hostel facilities'],id:'boys_hostel',p:0.7},
+    {k:['environment','sustainability','environment and sustainability','green campus','solar power','rainwater harvesting','sewage treatment','eco friendly','stp','waste recycling','greenery','campus environment','solar energy','sustainable campus'],id:'environment_sustainability',p:1},
     {k:['nearby','surroundings','area around','near rvce','around campus','neighbourhood','neighborhood','food outside','restaurants near','hospital near','hospitals near','shops near','market near','atm near','nearby places','what is around'],id:'nearby',p:1},
     {k:['internship','internships','intern','summer intern','company intern','internship opportunities','internship cell','internship support','do students get internships','intern kahan','intern milta hai'],id:'internship',p:1},
     {k:['startup','entrepreneurship','startup culture','e cell','ecell','incubation','startup support','business','own company','startup scene','entrepreneur','innovation hub'],id:'startup',p:1},
@@ -1415,6 +1631,8 @@ const QA = [
     {k:['steam team','rvjsteam'],id:'rvjsteam',p:1},
     {k:['calendar','academic calendar','calendar of events'],id:'calendar_events',p:0.7},
     {k:['comparison','compare','rvce vs pes','rvce vs msrit','rvce vs bms','rvce vs sit','pes vs rvce','msrit vs rvce','bms vs rvce','which is better','better than rvce','rvce better','college comparison'],id:'college_compare',p:1},
+    {k:['statutory committees','committees','governing body','academic council','finance committee','board of studies'],id:'committees',p:1},
+    {k:['policies','college policies','documents','mandatory disclosure','code of conduct','service rules','quality policy'],id:'policies',p:1},
     // ===== MULTI-TURN CONTEXT INTENTS =====
     {k:['tell me more','more about this','more details','elaborate','explain more','more info','more information','can you tell me more','in detail','detailed info','detail','details','expand','continue','go on','aur batao','aur bata'],id:'_more',p:5},
     {k:['go back','back','previous','prev','go back to','return','wapas','piche'],id:'_back',p:5},
@@ -1429,7 +1647,7 @@ const allBranches = [...KB.departments.ug, ...KB.departments.pg];
 
 allBranches.forEach(branch => {
     const code = branch.c;
-    const name = sanitize(branch.n.replace(/\(.*\)/, '')).toLowerCase();
+    const name = sanitize(branch.n.replace(/\s*\([^)]*\)$/, '').trim()).toLowerCase();
     const shortCode = branch.c.toLowerCase();
     
     const kws = [
@@ -1452,8 +1670,10 @@ QA.push(...branchHodIntents);
 const branchPlacementIntents = [];
 allBranches.forEach(branch => {
     const code = branch.c;
-    const name = sanitize(branch.n.replace(/\(.*\)/, '')).toLowerCase();
-    const shortCode = branch.c.toLowerCase();
+    const name = sanitize(branch.n.replace(/\s*\([^)]*\)$/, '').trim()).toLowerCase();
+    let shortCode = branch.c.toLowerCase();
+    if (shortCode === 'is') shortCode = 'ise';
+    if (shortCode === 'me') shortCode = 'mech';
     
     const kws = [
         `${shortCode} placement`, `${shortCode} placements`, `${shortCode} salary`, `${shortCode} package`, `${shortCode} job`,
@@ -1471,6 +1691,36 @@ allBranches.forEach(branch => {
     branchPlacementIntents.push({ k: kws, id: `plcmt_${shortCode}`, p: 0.4 });
 });
 QA.push(...branchPlacementIntents);
+
+// 2.6 Dynamically inject specific Intake queries for ALL departments from KB
+const branchIntakeIntents = [];
+allBranches.forEach(branch => {
+    const code = branch.c;
+    const name = sanitize(branch.n.replace(/\s*\([^)]*\)$/, '').trim()).toLowerCase();
+    const shortCode = branch.c.toLowerCase();
+    
+    const kws = [
+        `${shortCode} intake`, `intake of ${shortCode}`, `how many seats in ${shortCode}`, `${shortCode} seats`,
+        `${name} intake`, `intake of ${name}`, `how many seats in ${name}`, `${name} seats`
+    ];
+    
+    kws.push(`${shortCode} accreditation`, `${shortCode} accredited`, `${name} accreditation`, `${name} accredited`);
+    
+    if (shortCode === 'cs') kws.push('cse intake', 'cse seats', 'computer science intake');
+    if (shortCode === 'cs') kws.push('cse accreditation', 'computer science accreditation');
+    if (shortCode === 'ec') kws.push('ece accreditation');
+    if (shortCode === 'ee') kws.push('eee accreditation');
+    if (shortCode === 'me') kws.push('mechanical accreditation', 'mech accreditation');
+    if (shortCode === 'cv') kws.push('civil accreditation');
+    if (shortCode === 'ec') kws.push('ece intake', 'ece seats');
+    if (shortCode === 'ee') kws.push('eee intake', 'eee seats');
+    if (shortCode === 'me') kws.push('mechanical intake', 'mech intake');
+    if (shortCode === 'cv') kws.push('civil intake');
+
+    branchIntakeIntents.push({ k: kws, id: `intake_${shortCode}`, p: 0.4 });
+});
+QA.push(...branchIntakeIntents);
+
 
 // 3. Dynamically inject Faculty names for direct search
 if (KB.faculty) {
@@ -1508,7 +1758,395 @@ function findFacultyMatch(input) {
         }
     }
     return bestMatch;
+    return bestMatch;
 }
+
+// Department-wise detailed placement statistics (Latest fetched from RVCE Portal)
+KB.placement_stats = {
+    
+    'cs_core': {
+        name: "B.E. Computer Science And Engineering",
+        ongoing: { name: "B.E. CSE (2025-26 Placements Ongoing)", companies: "85", offers: "217", students: "200", avg: "20.32 LPA", max: "67 LPA" },
+        full: [
+            { name: "B.E. CSE (2024-25*)", companies: "91", offers: "190", students: "171", avg: "16.92 LPA", max: "67 LPA" },
+            { name: "B.E. CSE (2023-24)", companies: "81", offers: "177", students: "166", avg: "15.81 LPA", max: "67 LPA" },
+            { name: "B.E. CSE (2022-23)", companies: "103", offers: "225", students: "178", avg: "14.66 LPA", max: "48 LPA" },
+            { name: "B.E. CSE (2021-22)", companies: "110", offers: "212", students: "179", avg: "14.12 LPA", max: "35.37 LPA" },
+            { name: "B.E. CSE (2020-21)", companies: "95", offers: "202", students: "163", avg: "15.01 LPA", max: "32 LPA" }
+        ]
+    },
+    'cs_ds': {
+        name: "B.E. Computer Science And Engineering (Data Science)",
+        ongoing: { name: "B.E. CSE Data Science (2025-26 Placements Ongoing)", companies: "42", offers: "55", students: "50", avg: "17.6 LPA", max: "40 LPA" }
+    },
+    'cs_cy': {
+        name: "B.E. Computer Science And Engineering (Cyber Security)",
+        ongoing: { name: "B.E. CSE Cyber Security (2025-26 Placements Ongoing)", companies: "45", offers: "51", students: "49", avg: "16.48 LPA", max: "35 LPA" }
+    },
+    'cs_aiml': {
+        name: "B.E. Computer Science And Engineering (AIML)",
+        ongoing: { name: "B.E. CSE AIML (2025-26 Placements Ongoing)", companies: "45", offers: "55", students: "53", avg: "18.17 LPA", max: "35 LPA" }
+    },
+    'cs_mtech': {
+        name: "M.Tech. Computer Science & Engineering",
+        ongoing: { name: "M.Tech. CSE (Placements Ongoing)", companies: "16", offers: "14", students: "14", avg: "19.21 LPA", max: "24 LPA" },
+        full: [
+            { name: "M.Tech. CSE (2024-25*)", companies: "16", offers: "14", students: "14", avg: "19.21 LPA", max: "24 LPA" },
+            { name: "M.Tech. CSE (2023-24)", companies: "17", offers: "11", students: "11", avg: "15.13 LPA", max: "25 LPA" },
+            { name: "M.Tech. CSE (2022-23)", companies: "14", offers: "15", students: "15", avg: "13.01 LPA", max: "26 LPA" },
+            { name: "M.Tech. CSE (2021-22)", companies: "15", offers: "16", students: "16", avg: "11.05 LPA", max: "29.05 LPA" },
+            { name: "M.Tech. CSE (2020-21)", companies: "Data unavailable", offers: "Data unavailable", students: "Data unavailable", avg: "Data unavailable", max: "Data unavailable" }
+        ]
+    },
+    'cs_cne': {
+        name: "M.Tech. Computer Network Engineering",
+        ongoing: { name: "M.Tech. CNE (Placements Ongoing)", companies: "14", offers: "12", students: "12", avg: "13.02 LPA", max: "24 LPA" },
+        full: [
+            { name: "M.Tech. CNE (2024-25*)", companies: "14", offers: "12", students: "12", avg: "13.02 LPA", max: "24 LPA" },
+            { name: "M.Tech. CNE (2023-24)", companies: "18", offers: "16", students: "16", avg: "5.76 LPA", max: "15 LPA" },
+            { name: "M.Tech. CNE (2022-23)", companies: "13", offers: "14", students: "14", avg: "7.98 LPA", max: "16.24 LPA" },
+            { name: "M.Tech. CNE (2021-22)", companies: "14", offers: "15", students: "15", avg: "8.57 LPA", max: "20 LPA" },
+            { name: "M.Tech. CNE (2020-21)", companies: "Data unavailable", offers: "Data unavailable", students: "Data unavailable", avg: "Data unavailable", max: "Data unavailable" }
+        ]
+    },
+'ae': {
+        name: "Aerospace Engineering",
+        ongoing: {
+            name: "B.E. Aerospace Engineering (2025-26)",
+            companies: 18, offers: 30, students: 30,
+            avg: "8.12 LPA", max: "11.00 LPA"
+        },
+        'aiml': {
+        name: "AI & Machine Learning",
+        ongoing: {
+            name: "B.E. AI & Machine Learning (2025-26)",
+            companies: 47, offers: 63, students: 54,
+            avg: "17.29 LPA", max: "53.00 LPA"
+        },
+        full: []
+    },
+        full: [
+            { name: "2024-25", companies: 18, offers: 33, students: 28, avg: "7.02 LPA", max: "13.50 LPA" },
+            { name: "2023-24", companies: 23, offers: 38, students: 33, avg: "6.83 LPA", max: "10.00 LPA" },
+            { name: "2022-23", companies: 27, offers: 40, students: 33, avg: "7.60 LPA", max: "13.00 LPA" },
+            { name: "2021-22", companies: 35, offers: 48, students: 44, avg: "7.83 LPA", max: "15.00 LPA" }
+        ]
+    },
+'aiml': {
+        name: "AI & Machine Learning",
+        ongoing: {
+            name: "B.E. AI & Machine Learning (2025-26)",
+            companies: 47, offers: 63, students: 54,
+            avg: "17.29 LPA", max: "53.00 LPA"
+        },
+        full: []
+    },
+'bt': {
+        name: "Biotechnology",
+        ug: {
+            ongoing: {
+                name: "B.E. in Biotechnology (2025-26)",
+                companies: 5, offers: 8, students: 8,
+                avg: "9.28 LPA", max: "14.81 LPA"
+            },
+            full: [
+                { name: "2021-25", companies: 21, offers: 27, students: 27, avg: "4.75 LPA", max: "14.81 LPA" },
+                { name: "2020-24", companies: "-", offers: 40, students: 40, avg: "5.49 LPA", max: "12.00 LPA" },
+                { name: "2019-23", companies: "-", offers: 30, students: 30, avg: "5.42 LPA", max: "11.60 LPA" },
+                { name: "2018-22", companies: "-", offers: 21, students: 21, avg: "5.42 LPA", max: "16.00 LPA" }
+            ]
+        },
+        pg: {
+            ongoing: {
+                name: "M.Tech. in Biotechnology (2025-26)",
+                companies: 6, offers: 14, students: 14,
+                avg: "4.30 LPA", max: "5.50 LPA"
+            },
+            full: [
+                { name: "2022-24", companies: "-", offers: 8, students: 8, avg: "3.35 LPA", max: "5.80 LPA" },
+                { name: "2021-23", companies: "-", offers: 14, students: 14, avg: "3.80 LPA", max: "6.21 LPA" },
+                { name: "2020-22", companies: "-", offers: 11, students: 11, avg: "3.50 LPA", max: "4.20 LPA" },
+                { name: "2019-21", companies: "-", offers: 9, students: 9, avg: "3.00 LPA", max: "3.80 LPA" }
+            ]
+        }
+    },
+'ch': {
+        name: "Chemical Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Chemical Engineering (2025-26)",
+                companies: 10, offers: 21, students: 18,
+                avg: "9.44 LPA", max: "18.33 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 23, offers: 28, students: 28, avg: "6.69 LPA", max: "14.63 LPA" },
+                { name: "2023-24", companies: 20, offers: 25, students: 25, avg: "6.78 LPA", max: "15.70 LPA" },
+                { name: "2022-23", companies: 23, offers: 26, students: 21, avg: "7.70 LPA", max: "13.95 LPA" },
+                { name: "2021-22", companies: 27, offers: 31, students: 26, avg: "7.14 LPA", max: "12.90 LPA" }
+            ]
+        }
+    },
+'cv': {
+        name: "Civil Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Civil Engineering (2025-26)",
+                companies: 14, offers: 38, students: 35,
+                avg: "7.03 LPA", max: "18.33 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 25, offers: 82, students: 77, avg: "5.52 LPA", max: "33.00 LPA" },
+                { name: "2023-24", companies: 34, offers: 73, students: 71, avg: "5.11 LPA", max: "10.00 LPA" },
+                { name: "2022-23", companies: 34, offers: 54, students: 50, avg: "6.72 LPA", max: "13.95 LPA" },
+                { name: "2021-22", companies: 33, offers: 38, students: 38, avg: "6.39 LPA", max: "12.09 LPA" }
+            ]
+        },
+        pg: {
+            ongoing: [
+                {
+                    name: "M.Tech. Structural Engineering (2025-26)",
+                    companies: 0, offers: 0, students: 0, avg: "0 LPA", max: "0 LPA"
+                },
+                {
+                    name: "M.Tech. Highway Technology (2025-26)",
+                    companies: 0, offers: 0, students: 0, avg: "0 LPA", max: "0 LPA"
+                }
+            ],
+            full: [
+                { name: "Structural Engg (2023-24)", companies: 6, offers: 10, students: 10, avg: "3.06 LPA", max: "6.00 LPA" },
+                { name: "Structural Engg (2022-23)", companies: 6, offers: 7, students: 7, avg: "4.96 LPA", max: "6.00 LPA" },
+                { name: "Structural Engg (2021-22)", companies: 6, offers: 7, students: 7, avg: "4.22 LPA", max: "5.00 LPA" },
+                
+                { name: "Highway Tech (2023-24)", companies: 8, offers: 13, students: 13, avg: "4.05 LPA", max: "7.00 LPA" },
+                { name: "Highway Tech (2022-23)", companies: 9, offers: 12, students: 12, avg: "5.22 LPA", max: "6.00 LPA" },
+                { name: "Highway Tech (2021-22)", companies: 7, offers: 11, students: 11, avg: "4.74 LPA", max: "5.03 LPA" }
+            ]
+        }
+    },
+'ec': {
+        name: "Electronics & Communication Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Electronics & Communication Engg (2025-26)",
+                companies: 65, offers: 148, students: 136,
+                avg: "16.47 LPA", max: "37.00 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 77, offers: 167, students: 156, avg: "13.40 LPA", max: "44.72 LPA" },
+                { name: "2023-24", companies: 83, offers: 159, students: 152, avg: "11.27 LPA", max: "25.85 LPA" },
+                { name: "2022-23", companies: 92, offers: 171, students: 161, avg: "12.12 LPA", max: "35.50 LPA" },
+                { name: "2021-22", companies: 206, offers: 180, students: 152, avg: "8.40 LPA", max: "84.00 LPA" }
+            ]
+        },
+        pg: {
+            ongoing: [
+                {
+                    name: "M.Tech. VLSI Design & Embedded Systems (2025-26)",
+                    companies: 23, offers: 29, students: 29, avg: "19.41 LPA", max: "35.00 LPA"
+                },
+                {
+                    name: "M.Tech. Communication Systems (2025-26)",
+                    companies: 9, offers: 6, students: 6, avg: "10.33 LPA", max: "15.00 LPA"
+                }
+            ],
+            full: [
+                { name: "VLSI Design & Embedded Systems (2024-25)", companies: 23, offers: 29, students: 29, avg: "19.41 LPA", max: "35.00 LPA" },
+                { name: "VLSI Design & Embedded Systems (2023-24)", companies: 21, offers: 27, students: 27, avg: "11.97 LPA", max: "19.00 LPA" },
+                { name: "VLSI Design & Embedded Systems (2022-23)", companies: 25, offers: 33, students: 33, avg: "16.18 LPA", max: "26.00 LPA" },
+                { name: "VLSI Design & Embedded Systems (2021-22)", companies: 26, offers: 32, students: 32, avg: "12.75 LPA", max: "29.40 LPA" },
+
+                { name: "Communication Systems (2024-25)", companies: 9, offers: 6, students: 6, avg: "10.33 LPA", max: "15.00 LPA" },
+                { name: "Communication Systems (2023-24)", companies: 13, offers: 9, students: 9, avg: "7.06 LPA", max: "10.00 LPA" },
+                { name: "Communication Systems (2022-23)", companies: 12, offers: 4, students: 4, avg: "8.46 LPA", max: "16.24 LPA" },
+                { name: "Communication Systems (2021-22)", companies: 12, offers: 12, students: 12, avg: "8.05 LPA", max: "16.00 LPA" }
+            ]
+        }
+    },
+'ei': {
+        name: "Electronics and Instrumentation Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Electronics and Instrumentation Engineering (2025-26)",
+                companies: 27, offers: 53, students: 46,
+                avg: "11.77 LPA", max: "37.00 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 31, offers: 55, students: 51, avg: "9.28 LPA", max: "39.00 LPA" },
+                { name: "2023-24", companies: 30, offers: 46, students: 43, avg: "9.29 LPA", max: "18.35 LPA" },
+                { name: "2022-23", companies: 41, offers: 56, students: 45, avg: "9.59 LPA", max: "19.19 LPA" },
+                { name: "2021-22", companies: 40, offers: 74, students: 54, avg: "11.11 LPA", max: "31.76 LPA" }
+            ]
+        }
+    },
+'is': {
+        name: "Information Science and Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Information Science and Engineering (2025-26)",
+                companies: 43, offers: 67, students: 57,
+                avg: "19.11 LPA", max: "67.00 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 55, offers: 71, students: 62, avg: "15.41 LPA", max: "67.00 LPA" },
+                { name: "2023-24", companies: 51, offers: 61, students: 55, avg: "16.37 LPA", max: "92.00 LPA" },
+                { name: "2022-23", companies: 63, offers: 73, students: 60, avg: "14.12 LPA", max: "62.00 LPA" },
+                { name: "2021-22", companies: 67, offers: 74, students: 56, avg: "14.12 LPA", max: "32.50 LPA" }
+            ]
+        },
+        pg: {
+            ongoing: [
+                {
+                    name: "M.Tech. Software Engineering (2025-26)",
+                    companies: 13, offers: 10, students: 10, avg: "15.18 LPA", max: "23.00 LPA"
+                },
+                {
+                    name: "M.Tech. Information Technology (2025-26)",
+                    companies: 14, offers: 9, students: 9, avg: "14.70 LPA", max: "21.00 LPA"
+                }
+            ],
+            full: [
+                { name: "Software Engineering (2024-25)", companies: 13, offers: 10, students: 10, avg: "15.18 LPA", max: "23.00 LPA" },
+                { name: "Software Engineering (2023-24)", companies: 13, offers: 8, students: 8, avg: "7.95 LPA", max: "12.00 LPA" },
+                { name: "Software Engineering (2022-23)", companies: 14, offers: 11, students: 11, avg: "10.00 LPA", max: "26.25 LPA" },
+                { name: "Software Engineering (2021-22)", companies: 14, offers: 13, students: 13, avg: "9.10 LPA", max: "25.00 LPA" },
+
+                { name: "Information Technology (2024-25)", companies: 14, offers: 9, students: 9, avg: "14.70 LPA", max: "21.00 LPA" },
+                { name: "Information Technology (2023-24)", companies: 14, offers: 10, students: 10, avg: "5.65 LPA", max: "10.00 LPA" },
+                { name: "Information Technology (2022-23)", companies: 14, offers: 7, students: 7, avg: "11.00 LPA", max: "19.00 LPA" },
+                { name: "Information Technology (2021-22)", companies: 14, offers: 14, students: 14, avg: "10.95 LPA", max: "28.00 LPA" }
+            ]
+        }
+    },
+'ee': {
+        name: "Electrical and Electronics Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Electrical and Electronics Engineering (2025-26)",
+                companies: 31, offers: 40, students: 36,
+                avg: "12.45 LPA", max: "30.00 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 33, offers: 49, students: 43, avg: "10.26 LPA", max: "25.72 LPA" },
+                { name: "2023-24", companies: 33, offers: 47, students: 44, avg: "8.83 LPA", max: "22.00 LPA" },
+                { name: "2021-22", companies: 43, offers: 56, students: 49, avg: "10.24 LPA", max: "21.16 LPA" },
+                { name: "2020-21", companies: 41, offers: 55, students: 50, avg: "10.49 LPA", max: "25.24 LPA" }
+            ]
+        },
+        pg: {
+            ongoing: {
+                name: "M.Tech. Power Electronics (2025-26)",
+                companies: 8, offers: 6, students: 6,
+                avg: "6.83 LPA", max: "10.00 LPA"
+            },
+            full: [
+                { name: "2023-24", companies: 14, offers: 11, students: 11, avg: "6.68 LPA", max: "18.00 LPA" },
+                { name: "2021-22", companies: 13, offers: 12, students: 12, avg: "6.17 LPA", max: "9.00 LPA" },
+                { name: "2020-21", companies: 17, offers: 17, students: 17, avg: "6.55 LPA", max: "16.00 LPA" }
+            ]
+        }
+    },
+'mca': {
+        name: "Master of Computer Applications",
+        pg: {
+            ongoing: {
+                name: "Master of Computer Applications (2025-26)",
+                companies: 3, offers: 21, students: 22,
+                avg: "4.00 LPA", max: "11.59 LPA"
+            },
+            full: [
+                { name: "2025-26 (Timeline)", companies: 24, offers: 62, students: 59, avg: "9.00 LPA", max: "20.00 LPA" },
+                { name: "2024-25", companies: 35, offers: 80, students: 80, avg: "8.94 LPA", max: "20.00 LPA" },
+                { name: "2023-24", companies: 52, offers: 132, students: 95, avg: "8.29 LPA", max: "25.00 LPA" },
+                { name: "2021-22", companies: 56, offers: 146, students: 102, avg: "10.00 LPA", max: "28.00 LPA" },
+                { name: "2020-21", companies: 85, offers: 274, students: 210, avg: "7.50 LPA", max: "20.00 LPA" }
+            ]
+        }
+    },
+'me': {
+        name: "Mechanical Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Mechanical Engineering (2025-26)",
+                companies: 39, offers: 86, students: 80,
+                avg: "9.22 LPA", max: "18.33 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 44, offers: 88, students: 82, avg: "8.21 LPA", max: "18.33 LPA" },
+                { name: "2023-24", companies: 46, offers: 78, students: 70, avg: "9.07 LPA", max: "18.00 LPA" },
+                { name: "2022-23", companies: 60, offers: 113, students: 85, avg: "8.35 LPA", max: "16.00 LPA" },
+                { name: "2021-22", companies: 45, offers: 112, students: 69, avg: "9.05 LPA", max: "18.00 LPA" }
+            ]
+        },
+        pg: {
+            ongoing: [
+                {
+                    name: "M.Tech. Product Design And Manufacturing (2025-26)",
+                    companies: 6, offers: 8, students: 8, avg: "7.09 LPA", max: "14.00 LPA"
+                },
+                {
+                    name: "M.Tech. Machine Design (2025-26)",
+                    companies: 8, offers: 7, students: 7, avg: "6.02 LPA", max: "8.00 LPA"
+                }
+            ],
+            full: [
+                { name: "Product Design & Manufacturing (2024-25)", companies: 6, offers: 8, students: 8, avg: "7.09 LPA", max: "14.00 LPA" },
+                { name: "Product Design & Manufacturing (2022-23)", companies: 12, offers: 23, students: 23, avg: "6.82 LPA", max: "10.00 LPA" },
+                { name: "Product Design & Manufacturing (2021-22)", companies: 14, offers: 20, students: 20, avg: "6.45 LPA", max: "12.00 LPA" },
+
+                { name: "Machine Design (2024-25)", companies: 8, offers: 7, students: 7, avg: "6.02 LPA", max: "8.00 LPA" },
+                { name: "Machine Design (2022-23)", companies: 10, offers: 17, students: 17, avg: "6.44 LPA", max: "20.00 LPA" },
+                { name: "Machine Design (2021-22)", companies: 12, offers: 15, students: 15, avg: "5.83 LPA", max: "12.00 LPA" }
+            ]
+        }
+    },
+'im': {
+        name: "Industrial Engineering and Management",
+        ug: {
+            ongoing: {
+                name: "B.E. Industrial Engineering and Management (2025-26)",
+                companies: 12, offers: 30, students: 27,
+                avg: "12.46 LPA", max: "21.45 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 30, offers: 51, students: 46, avg: "7.68 LPA", max: "21.45 LPA" },
+                { name: "2023-24", companies: 30, offers: 53, students: 51, avg: "8.39 LPA", max: "20.00 LPA" },
+                { name: "2022-23", companies: 35, offers: 49, students: 49, avg: "9.06 LPA", max: "18.99 LPA" },
+                { name: "2021-22", companies: 38, offers: 66, students: 42, avg: "9.03 LPA", max: "14.95 LPA" }
+            ]
+        }
+    },
+'et': {
+        name: "Electronics And Telecommunication Engineering",
+        ug: {
+            ongoing: {
+                name: "B.E. Electronics And Telecommunication Engineering (2025-26)",
+                companies: 300, offers: 61, students: 47,
+                avg: "11.128 LPA", max: "50.00 LPA"
+            },
+            full: [
+                { name: "2024-25", companies: 41, offers: 53, students: 49, avg: "9.67 LPA", max: "39.00 LPA" },
+                { name: "2023-24", companies: "N/A", offers: 45, students: 60, avg: "75% Placed", max: "12 Higher Studies" },
+                { name: "2022-23", companies: "N/A", offers: 39, students: 64, avg: "61% Placed", max: "0 Higher Studies" },
+                { name: "2021-22", companies: "N/A", offers: 48, students: 60, avg: "80% Placed", max: "0 Higher Studies" },
+                { name: "2020-21", companies: "N/A", offers: 47, students: 54, avg: "87% Placed", max: "1 Higher Studies" }
+            ]
+        },
+        pg: {
+            ongoing: {
+                name: "M.Tech. Digital Communication Engineering (2025-26)",
+                companies: 1, offers: 1, students: 1,
+                avg: "15.00 LPA", max: "15.00 LPA"
+            },
+            full: [
+                { name: "2024-25*", companies: 1, offers: 1, students: 1, avg: "15.00 LPA", max: "15.00 LPA" },
+                { name: "2023-24", companies: 12, offers: 8, students: 8, avg: "7.50 LPA", max: "10.00 LPA" },
+                { name: "2021-22", companies: 12, offers: 11, students: 11, avg: "7.09 LPA", max: "18.60 LPA" },
+                { name: "2020-21", companies: 16, offers: 22, students: 22, avg: "8.22 LPA", max: "21.50 LPA" }
+            ]
+        }
+    }
+};
+
 // Human-readable labels for suggestion buttons
 const INTENT_LABELS = {
     greet:'Say Hi 👋', bye:'Bye!', about_disambiguation:'About 🤔', about_rvce:'About RVCE 🏫', about_rvei:'About RVEI (RSST) 🏛️', hostels:'Hostels 🏠',
@@ -1525,11 +2163,12 @@ const INTENT_LABELS = {
     safety: 'Campus Safety 🛡️', attendance: 'Attendance Rules 📋', roi: 'Value for Money 💎', girls_hostel: 'Girls Hostel 🏠',
     nearby: 'Nearby Areas 📍', internship: 'Internships 🧑‍💻', startup: 'Startups & E-Cell 🚀', peer_quality: 'Peer Quality 🎯',
     worth_it: 'Is RVCE Worth It? ⭐', best_branch: 'Best Branch 🔝', parking: 'Parking & Vehicles 🅿️', part_time: 'Part-time Work 💼',
+    committees: 'Statutory Committees 🏛️', policies: 'Policies & Documents 📜',
     alumni: 'Alumni Network 🤝', college_compare: 'College Comparison 📊',
     centres_of_excellence:'Centres of Excellence 🔬', collaborations:'Industry Partnerships 🤝', health_centre:'Health Facilities 🏥',
     professional_societies:'Student Societies 🤝', upcoming_events:'Upcoming Events 📅',
     ncc:'NCC 🇮🇳', nss:'NSS 🤝', mandatory_disclosure:'Mandatory Disclosure 📄',
-    kannada_sangha:'Kannada Sangha 🎭', rvjsteam:'RVJ STEAM Team 🎨', calendar_events:'Calendar of Events 📅',
+    kannada_sangha:'Kannada Sangha 🎭', rvjsteam:'RVJ STEAM Team 🎨', calendar_events:'Academic Calendar 📅',
     circulars: 'Circulars & Notifications 📢', notifications: 'Circulars & Notifications 📢', management_quota: 'Management Quota 💰', cutoffs: 'Cutoffs & Ranks 📊', fees: 'Fee Structure 💵',
     refund_policy: 'Refund Policy 💸', innovationTeams: 'Innovation Teams 💡', culturalLife: 'Cultural Life 🎭', vision: 'Vision & Mission 🎯',
     principal: 'Principal 👨‍🏫', vice_principal: 'Vice Principal 👩‍🏫', faculty: 'Faculty & Deans 👨‍🏫', deans_list: 'Deans List 📋', hods_list: 'HODs List 👩‍🏫',
@@ -1551,6 +2190,11 @@ branchPlacementIntents.forEach(di => {
     const c = di.id.replace('plcmt_', '');
     const d = KB.departments.ug.find(x=>x.c===c) || KB.departments.pg.find(x=>x.c===c);
     if (d) INTENT_LABELS[di.id] = d.n + " Placements 💼";
+});
+branchIntakeIntents.forEach(di => {
+    const c = di.id.replace('intake_', '');
+    const d = KB.departments.ug.find(x=>x.c===c) || KB.departments.pg.find(x=>x.c===c);
+    if (d) INTENT_LABELS[di.id] = d.n + " Intake & Accreditation 🎓";
 });
 // Populate Faculty Labels
 if (KB.faculty) {
@@ -1596,30 +2240,65 @@ const ABBR = {
 function classifyIntent(input) {
     let cleanInput = sanitize(input).toLowerCase();
 
+    // Extract requested year if any (e.g., 2024, 2023)
+    let extractedYear = null;
+    let extractedYears = [];
+    const yearMatches = cleanInput.match(/\b20\d{2}(?:-\d{2})?\b/g);
+    if (yearMatches) {
+        extractedYears = Array.from(new Set(yearMatches));
+        extractedYear = extractedYears.join(' & ');
+    }
+
+    // --- Wire up NLP Tokenizer (Ignore grammar/stop words for robust matching) ---
+    const nlpData = processNLPInput(cleanInput);
+    cleanInput = nlpData.cleanString;
+    // -----------------------------------------------------------------------------
+
+    // 0. Placement Regex Override (Detect Year-wise Dept Placements early)
+    let pMatch = /(?:placement stats|placement statistics|placement|placements|highest package|average package|salary)\s+(?:for|in|of)?\s*([a-zA-Z\s\(\)]+)/i.exec(cleanInput);
+    if (!pMatch) pMatch = /([a-zA-Z\s\(\)]+)\s+(?:placement stats|placement statistics|placement|placements|highest package|average package|salary)/i.exec(cleanInput);
+    
+    if (pMatch) {
+        let extractedDept = pMatch[1].trim();
+        // Remove common stop words from dept name
+        extractedDept = extractedDept.replace(/\b(engineering|technology|department|dept)\b/gi, '').trim();
+        
+        const matched = KB.departments.ug.find(x => x.c === extractedDept) ||
+                        KB.departments.pg.find(x => x.c === extractedDept) ||
+                        KB.departments.ug.find(x => x.n.toLowerCase().startsWith(extractedDept)) ||
+                        KB.departments.pg.find(x => x.n.toLowerCase().startsWith(extractedDept)) ||
+                        KB.departments.ug.find(x => x.n.toLowerCase().includes(extractedDept)) ||
+                        KB.departments.pg.find(x => x.n.toLowerCase().includes(extractedDept));
+        if (matched) {
+            return { type: 'exact', id: 'plcmt_' + matched.c, year: extractedYear, suggestions: [] };
+        }
+    }
+
     // Context Memory: Implicitly inject department if requested contextually
     const contextualTopics = ['placement', 'hod', 'faculty', 'labs', 'syllabus', 'research'];
     let strippedInput = cleanInput;
     if (typeof SESSION !== 'undefined' && SESSION.lastIntent && SESSION.lastIntent.startsWith('dept_')) {
         const hasTopic = contextualTopics.some(t => cleanInput.includes(t));
-        const hasDeptMention = cleanInput.match(/cse|cs|ec|mech|civil|ai|ml/i);
-        if (hasTopic && !hasDeptMention) {
+        const hasDeptMention = cleanInput.match(/\b(cse|cs|ece|ec|mech|civil|aiml|ai|ml|ise|eee|ee|biotech|bt|chemical|ch|cv|aerospace|ae|eie|ei|ete|et|mca|csds|cscy)\b/i);
+        const hasGlobalRole = cleanInput.match(/director|dean|officer|principal|vice principal|incharge|head of placement/i);
+        if (hasTopic && !hasDeptMention && !hasGlobalRole) {
             const branchCode = SESSION.lastIntent.replace('dept_', '');
             cleanInput += ` ${branchCode}`;
         }
     }
     
-    // Remove common stop words for more robust matching of separated keywords
-    const stopWords = ['the', 'is', 'for', 'a', 'an', 'of', 'in', 'to', 'and', 'with', 'about', 'on', 'at', 'please', 'can', 'you', 'tell', 'me', 'know'];
+    // Remove common stop words for more robust matching of separated keywords (excluding 'is' and 'me' to avoid dept collisions)
+    const stopWords = ['the', 'for', 'a', 'an', 'of', 'in', 'to', 'and', 'with', 'about', 'on', 'at', 'please', 'can', 'you', 'tell', 'know'];
     strippedInput = cleanInput.split(' ').filter(w => !stopWords.includes(w)).join(' ');
 
     // 0. Abbreviation Check
-    if (ABBR[cleanInput]) return { type: 'fuzzy', id: null, suggestions: [ABBR[cleanInput]] };
+    if (ABBR[cleanInput]) return { type: 'fuzzy', id: null, year: extractedYear, suggestions: [ABBR[cleanInput]]  };
 
     // 0.5 Context-aware multi-turn handling
     const contextIntents = ['_more','_back','_what_else','_yes','_no'];
     for (const q of QA) {
         if (contextIntents.includes(q.id) && q.k.includes(cleanInput)) {
-            return { type: 'context', id: q.id, suggestions: [] };
+            return { type: 'context', id: q.id, year: extractedYear, suggestions: []  };
         }
     }
     
@@ -1628,10 +2307,10 @@ function classifyIntent(input) {
         if (sanitize(label).toLowerCase() === cleanInput) return { type: 'exact', id, suggestions: [] };
     }
     for (const d of KB.departments.ug) {
-        if (sanitize(d.n).toLowerCase() === cleanInput) return { type: 'exact', id: 'dept_' + d.c, suggestions: [] };
+        if (sanitize(d.n).toLowerCase() === cleanInput) return { type: 'exact', id: 'dept_' + d.c, year: extractedYear, suggestions: []  };
     }
     for (const d of KB.departments.pg) {
-        if (sanitize(d.n).toLowerCase() === cleanInput) return { type: 'exact', id: 'dept_' + d.c, suggestions: [] };
+        if (sanitize(d.n).toLowerCase() === cleanInput) return { type: 'exact', id: 'dept_' + d.c, year: extractedYear, suggestions: []  };
     }
     const BUTTON_MAP = {
         'ug be': 'ugAdm', 'pg mtech': 'pgAdm', 'mca': 'mca', 'phd': 'phd',
@@ -1644,11 +2323,11 @@ function classifyIntent(input) {
         'sports info': 'sports', 'rvei website': 'trust',
         'website': 'website', 'email': 'contact', 'rvce edu in': 'website'
     };
-    if (BUTTON_MAP[cleanInput]) return { type: 'exact', id: BUTTON_MAP[cleanInput], suggestions: [] };
+    if (BUTTON_MAP[cleanInput]) return { type: 'exact', id: BUTTON_MAP[cleanInput], year: extractedYear, suggestions: []  };
 
     // 2. Exact match: user typed EXACTLY a keyword from the QA bank
     for (const q of QA) {
-        if (q.k.includes(cleanInput)) return { type: 'exact', id: q.id, suggestions: [] };
+        if (q.k.includes(cleanInput)) return { type: 'exact', id: q.id, year: extractedYear, suggestions: []  };
     }
 
     // 3. Keyword-in-sentence: a keyword appears as a whole word inside user's input
@@ -1704,7 +2383,7 @@ function classifyIntent(input) {
     // 2.5 Faculty Override (Prioritize specific faculty matches over generic keywords)
     const facultyId = findFacultyMatch(input);
     if (facultyId) {
-        return { type: 'exact', id: facultyId, suggestions: [] };
+        return { type: 'exact', id: facultyId, year: extractedYear, suggestions: []  };
     }
 
     // Composite Intent Resolution: Combine Department + Topic (e.g., CSE + Placements)
@@ -1725,6 +2404,9 @@ function classifyIntent(input) {
                 const branchCode = deptMatch.replace('dept_', '');
                 if (matchedIds.includes('placements') || cleanInput.includes('placement')) {
                     best = `plcmt_${branchCode}`;
+                    isComposite = true;
+                } else if (matchedIds.includes('career_options_menu') || cleanInput.includes('career') || cleanInput.includes('jobs') || cleanInput.includes('future')) {
+                    best = `career_${branchCode}`;
                     isComposite = true;
                 } else if (matchedIds.includes('hods_list') || matchedIds.includes('faculty') || cleanInput.includes('hod')) {
                     best = `hod_${branchCode}`;
@@ -1756,15 +2438,21 @@ function classifyIntent(input) {
                 if (!multiIds.includes('greet')) multiIds.unshift('greet');
             }
             
-            return { type: 'multi', ids: multiIds, overflow: overflowIds, suggestions: [] };
+            return { type: 'multi', ids: multiIds, overflow: overflowIds, year: extractedYear, suggestions: []  };
         }
     }
 
     if (best) {
-        if (matchedIntents.some(q => q.id === 'greet') && best !== 'greet') {
-            return { type: 'multi', ids: ['greet', best], suggestions: [] };
+        // Auto-map Department + Year directly to Placement stats (e.g., "ETE 2023" -> ETE Placements 2023)
+        if (extractedYear && best.startsWith('dept_')) {
+            best = best.replace('dept_', 'plcmt_');
+            isComposite = true; // Upgrade to exact match confidence
         }
-        return { type: 'keyword', id: best, suggestions: [] };
+
+        if (matchedIntents.some(q => q.id === 'greet') && best !== 'greet') {
+            return { type: 'multi', ids: ['greet', best], year: extractedYear, suggestions: [] };
+        }
+        return { type: isComposite ? 'exact' : 'keyword', id: best, year: extractedYear, suggestions: []  };
     }
 
     // 3.5 COE alias matching — check if user query contains any COE alias
@@ -1781,7 +2469,7 @@ function classifyIntent(input) {
                 }
             }
         }
-        if (bestCoe) return { type: 'exact', id: bestCoe, suggestions: [] };
+        if (bestCoe) return { type: 'exact', id: bestCoe, year: extractedYear, suggestions: []  };
     }
 
     // 4. Ultra-Aggressive Faculty Search (Move to secondary fallback)
@@ -1805,19 +2493,19 @@ function classifyIntent(input) {
             if (facultyMatches.length === 1) {
                 const fac = facultyMatches[0].f;
                 const finalId = `fac_${fac.n.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-                return { type: 'exact', id: finalId, suggestions: [] };
+                return { type: 'exact', id: finalId, year: extractedYear, suggestions: []  };
             } else if (facultyMatches.length > 1) {
-                return { type: 'fac_multi', matches: facultyMatches, suggestions: [] };
+                return { type: 'fac_multi', matches: facultyMatches, year: extractedYear, suggestions: [] };
             }
         }
     }
 
     // 5. Fuzzy match: no exact keyword found, try "Did you mean?" suggestions
     const suggestions = findSuggestions(input);
-    if (suggestions.length > 0) return { type: 'fuzzy', id: null, suggestions };
+    if (suggestions.length > 0) return { type: 'fuzzy', id: null, year: extractedYear, suggestions };
 
     // 5. No match at all
-    return { type: null, id: null, suggestions: [] };
+    return { type: null, id: null, year: extractedYear, suggestions: []  };
 }
 
 // Legacy wrapper for tests and button clicks (returns just the ID)
@@ -1928,7 +2616,7 @@ function getDeepInfo(lastId) {
         'departments': () => {
             r.text = T("RVCE has departments across multiple levels! 📚","Department Overview:");
             r.text += "\n\n**UG Programs (B.E.):** " + KB.departments.ug.length + " departments\n**PG Programs (M.Tech/MCA):** " + KB.departments.pg.length + " programs\n**PhD:** Available in all departments with 15 VTU-recognized Research Centres";
-            r.text += "\n\n**Top Departments:**\n• CSE — HOD: Dr. Shanta Rangaswamy\n• AIML — HOD: Dr. Sathish Babu B\n• ECE — HOD: Dr. Ravish Aradhya H V\n• ISE — HOD: Dr. Mamatha G S\n• ME — HOD: Dr. Shanmukha Nagaraj";
+            r.text += "\n\n**Top Departments:**\n• CSE — HOD: Dr. Shanta Rangaswamy\n• AIML — HOD: To Be Appointed\n• ECE — HOD: Dr. Ravish Aradhya H V\n• ISE — HOD: Dr. Mamatha G S\n• ME — HOD: Dr. Shanmukha Nagaraj";
             r.buttons = [{l:'UG Programs',a:'ugPrograms',i:'🎓'},{l:'PG Programs',a:'pgPrograms',i:'📘'},{l:'All HODs',a:'hods_list',i:'👩‍🏫'}];
         },
         'research': () => {
@@ -2176,7 +2864,7 @@ function getResponse(id) {
         ).join('\n');
         r.text += "\n\n**Industry Competence Centres (CoCs):**\n• " + KB.general.cocs.join("\n• ");
         r.buttons = [
-            {l:'Back 🔙',a:'centres_of_excellence',i:'🔙'},
+            {l:'Back 🔙',a:'_back',i:'🔙'},
             {l:'Full CoE Page 🌐',u:'https://rvce.edu.in/research_consulting/centre-of-excellence/',i:'🌐'}
         ]; break;
     case 'collaborations':
@@ -2209,6 +2897,22 @@ function getResponse(id) {
             {l:'Exam Circulars',u:KB.circulars.examinations,i:'📝'},
             {l:'Academic Circulars',u:KB.circulars.academic,i:'📚'},
             {l:'Fee Payment Circulars',u:'https://rvce.edu.in/academics_and_examinations/fee_payment_circulars/',i:'💰'}
+        ]; break;
+    case 'committees':
+        r.text += T("Here are the top Statutory Committees at RVCE! 🏛️","Statutory Committees at RVCE:");
+        r.text += "\n\n• **Governing Body**: Strategic oversight\n• **Academic Council**: Academic planning\n• **Board of Studies**: Curriculum design";
+        r.buttons = [
+            {l:'Governing Body PDF',u:'https://rvce.edu.in/wp-content/uploads/2025/10/RVCE.pdf',i:'📄'},
+            {l:'Academic Council PDF',u:'https://rvce.edu.in/wp-content/uploads/2025/10/AC-Members-List-2025-26.pdf',i:'📄'},
+            {l:'View All Committees 🌐',u:'https://rvce.edu.in/statutory-committees/',i:'🌐'}
+        ]; break;
+    case 'policies':
+        r.text += T("Here are some of the key Policies and Documents for RVCE! 📜","Key Policies & Documents:");
+        r.text += "\n\n• **Mandatory Disclosure**: Official college data\n• **Strategic Planning**: Long-term goals\n• **Code of Conduct**: Rules & guidelines";
+        r.buttons = [
+            {l:'Mandatory Disclosure',u:'https://rvce.edu.in/mandatory-disclosure/',i:'📄'},
+            {l:'Code of Conduct PDF',u:'https://rvce.edu.in/wp-content/uploads/2025/09/Code-of-conduct.pdf',i:'📄'},
+            {l:'View All Policies 🌐',u:'https://rvce.edu.in/about_us/policies-documents/',i:'🌐'}
         ]; break;
     case 'pgAdm':
         r.text += T("M.Tech time! 🚀","PG Admission:");
@@ -2267,18 +2971,16 @@ function getResponse(id) {
             {l:'Contact Details',a:'contact',i:'📞'}
         ]; break;
     case 'placements_yearly':
-        r.text += T("Here are the year-wise placement statistics for B.E. Computer Science & Engineering (2020-2025): 📊", "Year-wise Placement Statistics (CSE):");
-        KB.placement_stats['cs'].programs.forEach(prog => {
-            r.text += `\n\n**${prog.name}**`;
-            r.text += `\n• Companies Visited: ${prog.companies} | Offers Made: ${prog.offers}`;
-            r.text += `\n• Students Selected: ${prog.students}`;
-            r.text += `\n• Avg Salary: ${prog.avg} | Max Salary: ${prog.max}`;
-        });
-        r.buttons = [{l:'Overall 2026 Placements',a:'placements',i:'💼'}, {l:'Other Departments',a:'dept_placements_list',i:'📊'}]; break;
-    case 'placements_future':
-        r.text += T("Placement statistics for the 2027 batch (and beyond) are not yet available as the placement drives for these batches have not concluded. 📊", "Future Placement Statistics:");
-        r.text += "\n• Currently, we have the ongoing 2026 placement data and the finalized 2025 data available.";
-        r.buttons = [{l:'2026 Placements',a:'placements',i:'💼'}, {l:'Department-wise Stats',a:'dept_placements_list',i:'📊'}]; break;
+        if (typeof SESSION !== 'undefined' && SESSION.reqYear) {
+            r.text += T(`You asked for placement statistics for the year **${SESSION.reqYear}**. Which program level would you like to view? 📊`, `Select a program level to view placement statistics for ${SESSION.reqYear}:`);
+        } else {
+            r.text += T("Which program level's year-wise placement statistics would you like to view? 📊", "Select a program level for year-wise placement statistics:");
+        }
+        r.buttons = [
+            {l:'UG Programs (B.E.) 🎓',a:'plcmt_ug_categories',i:'🎓'},
+            {l:'PG Programs (M.Tech/MCA) 🎓',a:'plcmt_pg_categories',i:'🎓'},
+            {l:'Overall 2026 Placements',a:'placements',i:'💼'}
+        ]; break;
     case 'dept_placements_list':
         r.text += T("Explore our department-wise placement statistics! 📊 Select Program Level:", "Department-wise Placement Statistics - Select Level:");
         r.buttons = [
@@ -2382,18 +3084,25 @@ function getResponse(id) {
             {l:'Back',a:'plcmt_pg_categories',i:'🔙'}
         ];
         r.noMenu = true; break;
+    case 'placements_future':
+        r.text += T("Placement statistics for the 2027 batch (and beyond) are not yet available as the placement drives for these batches have not concluded. 📊", "Future Placement Statistics:");
+        r.text += "\n• Currently, we have the ongoing 2026 placement data and the finalized 2025 data available.";
+        r.buttons = [{l:'2026 Placements',a:'placements',i:'💼'}, {l:'Department-wise Stats',a:'dept_placements_list',i:'📊'}]; break;
     case 'placements':
         r.text += T("Our record is legendary! 📊 For the 2026 batch, the drive is ongoing with fantastic results!","Placement Statistics (2026 Batch - Ongoing):");
         r.text += "\n• Max: " + KB.placements.maxSalary + "\n• Avg: " + KB.placements.avgSalary + "\n• " + KB.placements.offers + "\n• " + KB.placements.companies + "\n• Top Recruiters: " + KB.placements.recruiters;
         r.text += T("\n\n🏆 Previous batch (2025): ₹67 LPA highest, 922 offers","\n\nPrevious Year (2025): ₹67 LPA highest package, 262 companies, 922 offers.");
-        r.buttons = [{l:'Placement Training',u:KB.placements.url,i:'🌐'}]; break;
+        r.buttons = [{l:'Department-wise Stats',a:'dept_placements_list',i:'📊'}, {l:'Placement Training',u:KB.placements.url,i:'🌐'}]; break;
+    case 'placement_director':
+        r.text += T("👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\n📌 **Role:** Heading the Department of Placement & Training at RVCE.", "👨‍💼 **Dean (Placement & Training):** Dr. D. Ranganath\n\nHeading the Placement & Training department at RVCE.");
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/placement_and_training/',i:'🌐'},{l:'Placement Stats 💼',a:'placements',i:'💼'},{l:'Faculty & Deans 👨‍🏫',a:'deans_list',i:'👨‍🏫'}]; break;
     case 'top_companies':
         r.text += T("RVCE attracts the best in the industry! 🏢 Here are some of our top recruiters:","Top Recruiting Companies at RVCE:");
         r.text += "\n\n• " + KB.placements.recruiters.split(", ").join("\n• ");
         r.buttons = [{l:'Placements',a:'placements',i:'💼'},{l:'Admissions',a:'admissions',i:'🎓'}]; break;
     case 'refund_policy':
-        r.text += T("Refund policy follows AICTE rules! 💸<br><br>• Before start: Full refund (-₹1k)<br>• After start: Only if seat filled<br>• Document retention is BANNED.",
-            "The Fee Refund Policy strictly follows <strong>AICTE Regulations</strong>.<br><br>• <strong>Before Course Start:</strong> Full refund minus a processing fee (max ₹1,00,0).<br>• <strong>After Course Start:</strong> Refundable only if the vacated seat is filled.<br>• <strong>Original Docs:</strong> By AICTE mandate, colleges cannot retain original certificates.");
+        r.text += T("Refund policy follows AICTE rules! 💸<br><br>• Before start: Full refund minus processing fee<br>• After start: Only if seat filled<br>• Document retention is BANNED.",
+            "The Fee Refund Policy strictly follows <strong>AICTE Regulations</strong>.<br><br>• <strong>Before Course Start:</strong> Full refund minus a processing fee.<br>• <strong>After Course Start:</strong> Refundable only if the vacated seat is filled.<br>• <strong>Original Docs:</strong> By AICTE mandate, colleges cannot retain original certificates.");
         break;
     case 'syllabus_1st_sem':
         r.text += T("1st Year Syllabus (VTU 2022 Scheme) 📚<br><br>Physics & Chemistry cycles apply! Key subjects include Math, Electronics, C-Programming.",
@@ -2456,10 +3165,19 @@ function getResponse(id) {
     case 'deans_list':
         r.text += T("Here are the top commanders at RVCE! ⚓\n\n","RVCE Deans & Key Executives:\n\n");
         r.text += "• **Principal:** Dr. K.N. Subramanya\n• **Vice Principal:** Dr. K. S. Geetha\n• **Dean Academics:** Dr. M.V. Renukadevi\n• **Dean Student Affairs:** Dr. B.M. Sagar\n• **Dean R&D:** Dr. M Uttara Kumari\n• **Dean CSE Cluster:** Dr. Ramakanth Kumar P\n• **Dean PG Circuit:** Dr. K Sreelakshmi\n• **Dean PG Non-Circuit:** Dr. Radhakrishna\n• **Dean Skill Dev:** Dr. M Krishna\n• **Dean Placement & Training:** Dr. D. Ranganath\n• **Dean Global Partnerships:** Dr. J R Nataraj";
-        r.buttons = [{l:'HODs List 📚',a:'hods_list',i:'👩‍🏫'}, {l:'Key Executives Page',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}]; break;
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}, {l:'HODs List 📚',a:'hods_list',i:'👩‍🏫'}]; break;
+    case 'dean_academics':
+        r.text += T("👩‍🏫 **Dean (Academics):** Dr. M.V. Renukadevi\n\n📌 **Role:** Heading Academic Regulations, Curriculum & Evaluation at RVCE.", "👩‍🏫 **Dean (Academics):** Dr. M.V. Renukadevi\n\nHeading Academic Affairs & Curriculum at RVCE.");
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Principal 👨‍🏫',a:'principal',i:'👨‍🏫'}]; break;
+    case 'dean_student_affairs':
+        r.text += T("👨‍🏫 **Dean (Student Affairs):** Dr. B.M. Sagar\n\n📌 **Role:** Heading Student Activities, Welfare & Clubs at RVCE.", "👨‍🏫 **Dean (Student Affairs):** Dr. B.M. Sagar\n\nHeading Student Welfare & Campus Activities at RVCE.");
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Cultural Life 🎭',a:'culturalLife',i:'🎭'}]; break;
+    case 'dean_rnd':
+        r.text += T("👩‍🔬 **Dean (Research & Development):** Dr. M Uttara Kumari\n\n📌 **Role:** Heading Research Projects, Patents & Grants at RVCE.", "👩‍🔬 **Dean (R&D):** Dr. M Uttara Kumari\n\nHeading Research & Innovation at RVCE.");
+        r.buttons = [{l:'Official Website 🌐',u:'https://rvce.edu.in/research_consulting/',i:'🌐'}, {l:'Research & R&D 🔬',a:'research',i:'🔬'}, {l:'All Deans 🎓',a:'deans_list',i:'👨‍🏫'}]; break;
     case 'hods_list':
         r.text += T("Here are the Heads of Departments (HODs): 📚\n\n","RVCE Head of Departments:\n\n");
-        r.text += "• **CSE:** Dr. Shanta Rangaswamy\n• **AIML:** Dr. Sathish Babu B\n• **ISE:** Dr. Mamatha G S\n• **ECE:** Dr. Ravish Aradhya H V\n• **Mechanical:** Dr. Shanmukha Nagaraj\n• **Civil:** Dr. Anjaneyappa\n• **EEE:** Dr. J N Hemalatha (I/c)\n• **Aerospace:** [Dr. Supreeth R](https://rvce.edu.in/department/ae/dr_r_supreeth/)\n• **Biotech:** Dr. Nagashree N Rao\n• **Chemical:** Dr. Jagadish H Patil\n• **EIE:** Dr. CH. Renumadhavi\n• **ETE:** Dr. Nagamani K\n• **IEM:** Dr. Rajeswara Rao K V S\n• **MCA:** Dr. Jasmine K S\n• **Physics:** Dr. G. Shireesha\n• **Maths:** Dr. Jayalatha G\n• **Chemistry:** Dr. Mahesh R";
+        r.text += "• **CSE:** Dr. Shanta Rangaswamy\n• **AIML:** To Be Appointed\n• **ISE:** Dr. Mamatha G S\n• **ECE:** Dr. Ravish Aradhya H V\n• **Mechanical:** Dr. Shanmukha Nagaraj\n• **Civil:** Dr. Anjaneyappa\n• **EEE:** Dr. J N Hemalatha (I/c)\n• **Aerospace:** [Dr. Supreeth R](https://rvce.edu.in/department/ae/dr_r_supreeth/)\n• **Biotech:** Dr. Nagashree N Rao\n• **Chemical:** Dr. Jagadish H Patil\n• **EIE:** Dr. CH. Renumadhavi\n• **ETE:** Dr. Nagamani K\n• **IEM:** Dr. Rajeswara Rao K V S\n• **MCA:** Dr. Jasmine K S\n• **Physics:** Dr. G. Shireesha\n• **Maths:** Dr. Jayalatha G\n• **Chemistry:** Dr. Mahesh R";
         r.buttons = [{l:'Deans List 🎓',a:'deans_list',i:'👨‍🏫'}, {l:'Key Executives Page',u:'https://rvce.edu.in/about_us/key-executives/',i:'🌐'}]; break;
     case 'dress_code':
         r.text += T("Dress sharp! 👔 No shorts or ripped jeans. Casuals are okay, but labs require safety gear (Khakis/Aprons)!",
@@ -2534,9 +3252,8 @@ function getResponse(id) {
         ];
         break;
     case 'phd':
-        r.text += T("Doctoral Programs (Ph.D.) 🧪:","Research Programs:");
-        r.text += "\n• " + KB.admissions.phd.info;
-        r.buttons = [{l:'Research Centres',a:'research',i:'🔬'},{l:'PhD Admissions',u:'https://rvce.edu.in/admissions/#ph_link',i:'🌐'}]; break;
+        r.text += T("RVCE offers robust Ph.D. programs! 🧪 Check the official page for research domains.","Ph.D. Programs:");
+        r.buttons = [{l:'Main Menu',a:'menu',i:'🏠'},{l:'Research at RVCE',u:'https://rvce.edu.in/research',i:'🔬'},{l:'PhD Admissions',u:'https://rvce.edu.in/admissions/#ph_link',i:'🌐'}]; break;
     case 'departments':
         r.text += T("Explore our departments! 📚 Choose a level of study:","Academic Departments - Select a level of study:");
         r.buttons = [
@@ -2544,6 +3261,22 @@ function getResponse(id) {
             {l:'PG Programs 📘',a:'pgPrograms',i:'📘'},
             {l:'Ph.D. Programs 🧪',a:'phd',i:'🧪'}
         ];
+        r.noMenu = true;
+        break;
+    case 'career_options_menu':
+        r.text += T("Select a department to view its Top Career Options! 🎯","Top Career Options - Select a Department:");
+        r.buttons = [];
+        KB.departments.ug.forEach(d => {
+            if (KB.career_options[d.c]) {
+                r.buttons.push({ l: d.n, a: 'career_' + d.c, i: '🎯' });
+            }
+        });
+        KB.departments.pg.forEach(d => {
+            if (KB.career_options[d.c]) {
+                r.buttons.push({ l: d.n, a: 'career_' + d.c, i: '🎯' });
+            }
+        });
+        r.buttons.push({l:'Main Menu',a:'menu',i:'🏠'});
         r.noMenu = true;
         break;
     case 'dept_group_comp':
@@ -2578,7 +3311,7 @@ function getResponse(id) {
     case 'hostels':
         r.text += T("Home away from home 🏠:","Hostel Facilities:");
         r.text += "\n• Boys: " + KB.hostels.boys + "\n• Girls: " + KB.hostels.girls + "\n• Amenities: " + KB.hostels.amenities;
-        r.buttons = [{l:'See Facilities',u:KB.hostels.url,i:'🌐'}]; break;
+        r.buttons = [{l:'Hostel Facilities Page 🌐',u:'https://rvce.edu.in/facilities/hostel/',i:'🌐'}]; break;
     case 'stats_disambiguation':
         r.text += T("Check out the numbers! 📊","RVCE Statistics:");
         r.buttons = [{l:'Placement Stats',a:'placements',i:'💼'},{l:'NIRF & Rankings',a:'ranking',i:'🏆'},{l:'Upcoming Events 📅',a:'upcoming_events',i:'🔥'}]; break;
@@ -2653,8 +3386,8 @@ function getResponse(id) {
         r.text += T("Official compliance and disclosures. 📄","Mandatory Disclosure:");
         r.buttons = [{l:'View Disclosure',u:'https://rvce.edu.in/mandatory-disclosure/',i:'📄'}]; break;
     case 'calendar_events':
-        r.text += T("Don't miss out on important dates! 📅","Calendar of Events:");
-        r.buttons = [{l:'Calendar of Events',u:'https://rvce.edu.in/calendar-of-events/',i:'📅'}]; break;
+        r.text += T("Don't miss out on important dates! 📅","Academic Calendar:");
+        r.buttons = [{l:'Academic Calendar',u:'https://rvce.edu.in/calendar-of-events/',i:'📅'}]; break;
     case 'sports_simple':
         r.text += T("Sporty campus! 🏅","Sports Facilities:");
         r.text += "\n• 400m athletic track\n• Cricket & Football grounds\n• Basketball, Volleyball, Badminton courts\n• Gymnatorium with modern equipment\n• Table Tennis, Chess";
@@ -2693,9 +3426,31 @@ function getResponse(id) {
         r.text += "• 2026 Highest Package: " + KB.placements2026.maxSalary + "\n• Avg Package: " + KB.placements2026.avgSalary + "\n• Offers so far: " + KB.placements2026.offers + "\n• " + KB.placements2026.companies + "\n• Top recruiters: Microsoft, Google, Amazon, Samsung\n• NAAC A+ accreditation";
         r.buttons = [{l:'Placements',a:'placements',i:'💼'},{l:'Fee Structure',a:'fees',i:'💰'}]; break;
     case 'girls_hostel':
-        r.text += T("Girls hostel deets! 🏠 Safe & well-managed!","Girls Hostel Information:");
-        r.text += "\n• DJ Block (On-campus): " + KB.hostelDetails.girlsBlocks.djBlock + "\n• Krishna Garden (Off-campus, Pattanagere): " + KB.hostelDetails.girlsBlocks.krishnaGarden + "\n• Fees (Triple): " + KB.hostelDetails.fees.tripleSharing + "\n• Fees (Double): " + KB.hostelDetails.fees.doubleSharing + "\n• Facilities: " + KB.hostelDetails.facilities + "\n• Residential wardens & CCTV in all blocks\n• Strict curfew timings enforced for safety";
-        r.buttons = [{l:'Safety Info',a:'safety',i:'🛡️'},{l:'All Hostels',a:'hostels',i:'🏠'}]; break;
+        r.text += T("Girls Hostel Facilities & Details 👧\n\n📌 **On-Campus Block:** Diamond Jubilee (DJ) Block (Deputy Warden: Dr. Sudha Kamath M K)\n📌 **Off-Campus Block:** Krishna Garden Block (Pattanagere)\n✨ **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Room & Strictly Veg Mess\n⏰ **Curfew:** Strict curfew timings for safety",
+            "### 👧 Girls Hostel Facilities & Information\n\n• **On-Campus Block:** Diamond Jubilee (DJ) Block (Deputy Warden: Dr. Sudha Kamath M K)\n• **Off-Campus Block:** Krishna Garden Block (Pattanagere)\n• **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Room & Strictly Veg Mess\n• **Safety:** Residential Wardens & Strict Curfew Timings");
+        r.buttons = [
+            {l:'Girls Hostel Page 🌐', u:'https://rvce.edu.in/facilities/hostel/', i:'🌐'},
+            {l:'Boys Hostel 👦', a:'boys_hostel', i:'👦'},
+            {l:'Mess Info 🍽️', a:'mess', i:'🍽️'},
+            {l:'Safety Info 🛡️', a:'safety', i:'🛡️'}
+        ]; break;
+    case 'boys_hostel':
+        r.text += T("Boys Hostel Facilities & Details 👦\n\n📌 **Blocks:** Chamundi, Cauvery, Sir MV, Krishna Blocks\n✨ **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Rooms, Sports Gym & Strictly Veg Mess",
+            "### 👦 Boys Hostel Facilities & Information\n\n• **Hostel Blocks:** Chamundi, Cauvery, Sir MV, Krishna Blocks\n• **Amenities:** 24/7 Security & CCTV, Wi-Fi, Laundry, Solar Hot Water, Reading Rooms, Sports Gym & Strictly Veg Mess");
+        r.buttons = [
+            {l:'Boys Hostel Page 🌐', u:'https://rvce.edu.in/facilities/hostel/', i:'🌐'},
+            {l:'Girls Hostel 👧', a:'girls_hostel', i:'👧'},
+            {l:'Mess Info 🍽️', a:'mess', i:'🍽️'},
+            {l:'Main Menu 📋', a:'menu', i:'📋'}
+        ]; break;
+    case 'environment_sustainability':
+        r.text += T("Environment & Sustainability at RVCE 🌿\n\nA serene, eco-friendly 16.85-acre campus built with sustainability at its core!\n\n• 💧 **Sewage Treatment Plant (STP):** Efficient STP recycling wastewater for campus gardening & flushing.\n• ☀️ **Solar Power Generation:** Rooftop solar PV panels reducing grid dependency.\n• 🌧️ **Rainwater Harvesting:** Campus recharge pits & rainwater harvesting structures.\n• 🌿 **Green Nursery & Eco-Landscaping:** Rich biodiversity & botanical greenery.",
+            "### 🌿 Environment & Sustainability at RVCE\n\nRVCE is committed to eco-friendly campus operations and green infrastructure:\n\n• **Sewage Treatment (STP):** Advanced STP recycling wastewater for campus landscaping.\n• **Solar Power:** Rooftop solar PV installations reducing grid power dependency.\n• **Rainwater Harvesting:** Groundwater recharge wells and rainwater capture systems.\n• **Eco-Landscaping:** Campus greenery, tree plantation & botanical nursery.");
+        r.buttons = [
+            {l:'Environment & Sustainability Page 🌐', u:'https://rvce.edu.in/facilities/environment_and_sustainability/', i:'🌐'},
+            {l:'Campus Infrastructure 🏢', a:'facilities', i:'🏢'},
+            {l:'Main Menu 📋', a:'menu', i:'📋'}
+        ]; break;
     case 'nearby':
         r.text += T("What's around RVCE? Plenty! 📍","Nearby Areas & Amenities:");
         r.text += "\n• Areas: " + KB.nearby.areas + "\n• Food: " + KB.nearby.food + "\n• Shopping: " + KB.nearby.shopping + "\n• Hospitals: " + KB.nearby.hospitals + "\n• Connectivity: " + KB.nearby.connectivity;
@@ -2823,6 +3578,37 @@ function getResponse(id) {
             const d = KB.departments.ug.find(x=>x.c===c) || KB.departments.pg.find(x=>x.c===c);
             if (d) return renderDepartment(d);
         }
+        // Handle 'More Options' for departments
+        if (id && id.startsWith('more_dept_')) {
+            const c = id.replace('more_dept_','');
+            const isUg = KB.departments.ug.find(x=>x.c===c);
+            const d = isUg || KB.departments.pg.find(x=>x.c===c);
+            if (d) {
+                r.text += T(`Here are more options for **${d.n}**: ⬇️`, `Additional links for ${d.n}:`);
+                if (KB.career_options[d.c]) r.buttons.push({l:'Top Career Options',a:'career_'+d.c,i:'🎯'});
+                if (d.syllabus) r.buttons.push({l:'Syllabus',u:d.syllabus,i:'📚'});
+                if (d.faculty) r.buttons.push({l:'Faculty',u:d.faculty,i:'👨‍🏫'});
+                if (d.collab) r.buttons.push({l:'Collaborations',u:d.collab,i:'🤝'});
+                if (d.labs) r.buttons.push({l:'Labs/Facilities',u:d.labs,i:'🧪'});
+                r.buttons.push({l:'🔙 Back',a:'_back',i:'🔙'});
+                r.noMenu = true;
+                return r;
+            }
+        }
+                // Handle Department Intake requests
+        if (id && id.startsWith('intake_')) {
+            const c = id.replace('intake_','');
+            const d = KB.departments.ug.find(x=>x.c===c) || KB.departments.pg.find(x=>x.c===c);
+            if (d) {
+                if (d.intake) {
+                    r.text += T(`The intake for **${d.n}** is **${d.intake}** seats! 🎓`, `The intake for ${d.n} is ${d.intake} seats.`);
+                } else {
+                    r.text += T(`I don't have the specific intake numbers for **${d.n}**.`, `Intake numbers for ${d.n} are currently unavailable.`);
+                }
+                r.buttons = [{l:'Department Info',a:'dept_'+c,i:'📚'}, {l:'All Intakes',a:'intake',i:'🎓'}];
+                return r;
+            }
+        }
 
         if (id && id.startsWith('cs_spec_')) {
             const specId = id.replace('cs_spec_', '');
@@ -2864,18 +3650,192 @@ function getResponse(id) {
             }
         }
 
+        // Handle Full Stats for departments
+        if (id && id.startsWith('plcmt_full_')) {
+            const originalId = id.replace('plcmt_full_', '');
+            let c = originalId;
+            let isUG = false, isPG = false;
+            if (c.endsWith('_ug')) { isUG = true; c = c.replace('_ug', ''); }
+            else if (c.endsWith('_pg')) { isPG = true; c = c.replace('_pg', ''); }
+            
+            let stats = KB.placement_stats[c];
+            if (stats) {
+                if (isUG && stats.ug) stats = stats.ug;
+                else if (isPG && stats.pg) stats = stats.pg;
+                
+                if (stats.full) {
+                    r.text += T(`Here are the full year-wise placement statistics for **${stats.name || KB.departments[isPG ? 'pg' : 'ug'].find(x=>x.c===c)?.n}**: 📊\n\n`, `Full Year-wise Placement Statistics:\n\n`);
+                    stats.full.forEach(prog => {
+                        r.text += `**${prog.name}**\n`;
+                        r.text += `  **Number of companies visited:** ${prog.companies}\n`;
+                        r.text += `  **Number of offers made:** ${prog.offers}\n`;
+                        r.text += `  **Number of students selected:** ${prog.students}\n`;
+                        r.text += `  **Average Salary:** ${prog.avg}\n`;
+                        r.text += `  **Maximum salary:** ${prog.max}\n\n`;
+                    });
+                    r.buttons = [{l: 'Back', a: `plcmt_${originalId}`, i: '🔙'}];
+                    return r;
+                }
+            }
+        }
+
         // Handle Department Placement requests
         if (id && id.startsWith('plcmt_')) {
-            const c = id.replace('plcmt_','');
+            const originalId = id.replace('plcmt_','');
+            let c = originalId;
+            let isUG = false, isPG = false;
+            if (c.endsWith('_ug')) { isUG = true; c = c.replace('_ug', ''); }
+            else if (c.endsWith('_pg')) { isPG = true; c = c.replace('_pg', ''); }
+
             const d = KB.departments.ug.find(x=>x.c===c) || KB.departments.pg.find(x=>x.c===c);
+            let rawStats = KB.placement_stats[c];
+            
             if (d) {
-                if (d.placement) {
+                if (rawStats) {
+                    if (!isUG && !isPG && (rawStats.ug || rawStats.pg)) {
+                        // Check if a year is requested
+                        if (typeof SESSION !== 'undefined' && SESSION.reqYear) {
+                            if (rawStats.ug) { isUG = true; }
+                            else if (rawStats.pg) { isPG = true; }
+                        } else {
+                            r.text += T(`The **${d.n}** department has both UG and PG programs. Which placement statistics would you like to view? 📊`, 
+                                        `Select the program level for ${d.n} placements:`);
+                            r.buttons = [];
+                            if (rawStats.ug) r.buttons.push({l: 'UG Programs (B.E.) 🎓', a: `plcmt_${c}_ug`, i: '🎓'});
+                            if (rawStats.pg) r.buttons.push({l: 'PG Programs (M.Tech/MCA) 🎓', a: `plcmt_${c}_pg`, i: '🎓'});
+                            r.buttons.push({l: 'Other Departments', a: 'dept_placements_list', i: '📋'});
+                            return r;
+                        }
+                    }
+
+                    let stats = rawStats;
+                    if (isUG && stats.ug) stats = stats.ug;
+                    else if (isPG && stats.pg) stats = stats.pg;
+
+                    // Year-specific logic
+                    if (typeof SESSION !== 'undefined' && SESSION.reqYear) {
+                        const requestedYears = SESSION.reqYear.split(' & ');
+                        let foundProgs = [];
+                        let missingYears = [];
+
+                        requestedYears.forEach(yr => {
+                            let specificProg = null;
+                            if (stats.full) specificProg = stats.full.find(p => p.name && p.name.includes(yr));
+                            if (!specificProg && stats.programs) specificProg = stats.programs.find(p => p.name && p.name.includes(yr));
+                            if (!specificProg && stats.ongoing && !Array.isArray(stats.ongoing) && (stats.ongoing.name||'').includes(yr)) specificProg = stats.ongoing;
+                            if (!specificProg && Array.isArray(stats.ongoing)) specificProg = stats.ongoing.find(p => p.name && p.name.includes(yr));
+                            
+                            if (specificProg) {
+                                foundProgs.push({ yr, prog: specificProg });
+                            } else {
+                                missingYears.push(yr);
+                            }
+                        });
+                        
+                        if (foundProgs.length > 0) {
+                            r.text += T(`Here are the placement highlights for **${d.n}** for the year(s) ${SESSION.reqYear}: 🚀\n\n`, `Detailed Placement Statistics for ${d.n} (${SESSION.reqYear}):\n\n`);
+                            foundProgs.forEach(item => {
+                                r.text += `**${item.prog.name}**\n`;
+                                r.text += `• **Number of companies visited:** ${item.prog.companies}\n`;
+                                r.text += `• **Number of offers made:** ${item.prog.offers}\n`;
+                                r.text += `• **Number of students selected:** ${item.prog.students}\n`;
+                                r.text += `• **Average Salary:** ${item.prog.avg}\n`;
+                                r.text += `• **Maximum salary:** ${item.prog.max}\n\n`;
+                            });
+                            
+                            if (missingYears.length > 0) {
+                                r.text += T(`*(Note: We couldn't find specific placement records for the year(s) ${missingYears.join(', ')}.)*\n\n`, `*(Note: We couldn't find specific placement records for the year(s) ${missingYears.join(', ')}.)*\n\n`);
+                            }
+                            
+                            r.buttons = [{l: 'View All Years 📊', a: `plcmt_${c}${isUG?'_ug':(isPG?'_pg':'')}`, i: '📅'}];
+                            return r;
+                        } else {
+                            r.text += T(`No placement record of academic year ${SESSION.reqYear} found for ${d.n}.`, `No placement record of academic year ${SESSION.reqYear} found for ${d.n}.`);
+                            r.buttons = [{l: 'View All Available Years 📊', a: `plcmt_${c}${isUG?'_ug':(isPG?'_pg':'')}`, i: '📅'}, {l: 'Other Departments', a: 'dept_placements_list', i: '📋'}];
+                            return r;
+                        }
+                    } else {
+                        r.text += T(`Here are the placement highlights for **${d.n}**: 🚀\n\n`, `Detailed Placement Statistics for ${d.n}:\n\n`);
+                    }
+                    
+                    if (stats.ongoing) {
+                        const progs = Array.isArray(stats.ongoing) ? stats.ongoing : [stats.ongoing];
+                        progs.forEach(prog => {
+                            r.text += `**${prog.name}**\n`;
+                            r.text += `• **Number of companies visited:** ${prog.companies}\n`;
+                            r.text += `• **Number of offers made:** ${prog.offers}\n`;
+                            r.text += `• **Number of students selected:** ${prog.students}\n`;
+                            r.text += `• **Average Salary:** ${prog.avg}\n`;
+                            r.text += `• **Maximum salary:** ${prog.max}\n\n`;
+                        });
+                        
+                        r.buttons = [];
+                        if (stats.full && stats.full.length > 0) {
+                            r.buttons.push({l: 'View Full Year-wise Stats 📊', a: `plcmt_full_${originalId}`, i: '📅'});
+                        }
+                    } else if (stats.programs) {
+                        stats.programs.forEach(prog => {
+                            r.text += `**${prog.name}**\n`;
+                            r.text += `• **Number of companies visited:** ${prog.companies}\n`;
+                            r.text += `• **Number of offers made:** ${prog.offers}\n`;
+                            r.text += `• **Number of students selected:** ${prog.students}\n`;
+                            r.text += `• **Average Salary:** ${prog.avg}\n`;
+                            r.text += `• **Maximum salary:** ${prog.max}\n\n`;
+                        });
+                        r.buttons = [];
+                    } else if (stats.companies !== undefined) {
+                        r.text += `• **Number of companies visited:** ${stats.companies}\n`;
+                        r.text += `• **Number of offers made:** ${stats.offers}\n`;
+                        r.text += `• **Number of students selected:** ${stats.students}\n`;
+                        r.text += `• **Average Salary:** ${stats.avg}\n`;
+                        r.text += `• **Maximum salary:** ${stats.max}\n`;
+                        r.buttons = [];
+                    } else {
+                        r.text += `*Placement statistics are currently being updated for this department.*\n`;
+                        r.buttons = [];
+                    }
+                    
+                    r.text += `\n**Top Recruiting Companies across RVCE:**\n${KB.placements.recruiters}\n`;
+                    
+                    if (d.placement) {
+                        r.buttons.push({l: 'Official Portal', u: d.placement, i: '🌐'});
+                    }
+                    r.buttons.push({l: 'Other Departments', a: isPG ? 'plcmt_pg_categories' : (isUG ? 'plcmt_ug_categories' : 'dept_placements_list'), i: '📋'}, {l: 'General Placements', a: 'placements', i: '💼'});
+                } else if (d.placement) {
                     r.text += T(`The **${d.n}** department has an excellent placement record! 💼\n\nYou can view the latest statistics, top recruiters, and placement highlights for this branch here:`, `Detailed Placement Information for ${d.n}:`);
                     r.buttons = [{l: d.n + ' Placements', u: d.placement, i: '📈'}, {l: 'General Placements', a: 'placements', i: '💼'}];
                 } else {
                     r.text += T(`You can find the placement information for **${d.n}** on the department's main page or by contacting the placement cell.`, `Placements for ${d.n}:`);
                     r.buttons = [{l: d.n + ' Main Page', u: d.u, i: '🌐'}, {l: 'General Placements', a: 'placements', i: '💼'}];
                 }
+                return r;
+            }
+        }
+
+        // Handle Top Career Options requests
+        if (id && id.startsWith('career_')) {
+            const c = id.replace('career_','');
+            const d = KB.departments.ug.find(x=>x.c===c) || KB.departments.pg.find(x=>x.c===c);
+            const careers = KB.career_options[c];
+            if (d) {
+                if (careers) {
+                    r.text += T(`Here are the Top Career Options for **${d.n}**: 🎯\n\n`, `Top Career Options for ${d.n}:\n\n`);
+                    for (const [program, roles] of Object.entries(careers)) {
+                        r.text += `**${program}**\n`;
+                        roles.forEach(role => {
+                            r.text += `• ${role}\n`;
+                        });
+                        r.text += `\n`;
+                    }
+                } else {
+                    r.text += `Sorry, we don't have the specific career options for **${d.n}** available right now.`;
+                }
+                r.buttons = [{l:'Main Page',u:d.u,i:'🌐'}];
+                if (d.about) r.buttons.push({l:'About Dept',u:d.about,i:'ℹ️'});
+                if (d.placement) r.buttons.push({l:'Placements',u:d.placement,i:'💼'});
+                r.buttons.push({l:'All Departments',a:'departments',i:'🔙'});
+                r.buttons.push({l:'More Options 🔽',a:'more_dept_'+d.c,i:'➕'});
+                r.noMenu = true;
                 return r;
             }
         }
@@ -3045,7 +4005,7 @@ micB.addEventListener('click', () => {
 
 /* =============== TELEMETRY & QUEUE =============== */
 /* =============== TELEMETRY & QUEUE =============== */
-const currentSessionId = (function() {
+var currentSessionId = (function() {
     let sid = sessionStorage.getItem('rvce_sid');
     if (!sid) {
         sid = 'sid_' + Math.random().toString(36).substr(2, 9);
@@ -3056,6 +4016,31 @@ const currentSessionId = (function() {
 
 function getSID() {
     return currentSessionId;
+}
+
+let userLocation = { city: 'Unknown', country: 'Unknown' };
+let locationFetched = false;
+
+async function fetchUserLocation() {
+    if (locationFetched) return;
+    try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data.city) userLocation.city = data.city;
+        if (data.country_name) userLocation.country = data.country_name;
+        locationFetched = true;
+    } catch(e) { console.warn("Location fetch failed"); }
+}
+fetchUserLocation();
+
+function getOS() {
+    const ua = navigator.userAgent;
+    if (/Windows/i.test(ua)) return "Windows";
+    if (/Mac/i.test(ua)) return "macOS";
+    if (/Linux/i.test(ua)) return "Linux";
+    if (/Android/i.test(ua)) return "Android";
+    if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
+    return "Unknown";
 }
 
 const telemetryQueue = [];
@@ -3076,36 +4061,85 @@ function logChatInteraction(query, intent_id, metadata = {}) {
     telemetryQueue.push({query, intent: intent_id, meta: metadata});
     processTelemetryQueue();
 
-    // 2. Standalone logic (localStorage for dashboard.html)
+    // 2. Standalone logic (localStorage for offline fallback)
+    const logEntry = { 
+        s: currentSessionId, 
+        q: query, 
+        i: intent_id, 
+        d: new Date().toISOString(),
+        t: 'message',
+        m: metadata,
+        device: navigator.userAgent,
+        deviceType: /Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(navigator.userAgent) ? 'mobile' : /(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(navigator.userAgent) ? 'tablet' : 'desktop',
+        browserName: getBrowserName(),
+        os: getOS(),
+        city: userLocation.city,
+        country: userLocation.country
+    };
+
     try {
         const logs = JSON.parse(localStorage.getItem('rvce_standalone_logs') || '[]');
-        logs.push({ 
-            s: currentSessionId, 
-            q: query, 
-            i: intent_id, 
-            d: new Date().toISOString(),
-            t: 'message',
-            m: metadata 
-        });
-        if (logs.length > 2000) logs.shift(); // Increased to 500 for micro-interactions
+        logs.push(logEntry);
+        if (logs.length > 2000) logs.shift(); // Increased to 2000 for micro-interactions
         localStorage.setItem('rvce_standalone_logs', JSON.stringify(logs));
     } catch(e) { console.warn("Local logging failed", e); }
+
+    // 3. Global Cloud Logging (MongoDB API)
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.protocol === 'file:') 
+        ? 'http://localhost:5000/api/logs' 
+        : '/api/logs';
+    try {
+        fetch(API_BASE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(logEntry)
+        }).catch(e => console.warn("Cloud logging failed", e));
+    } catch(e) { /* silent fail */ }
+}
+
+function getBrowserName() {
+    const ua = navigator.userAgent;
+    if (ua.includes("Chrome") && !ua.includes("Edg") && !ua.includes("OPR")) return "Chrome";
+    if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
+    if (ua.includes("Firefox")) return "Firefox";
+    if (ua.includes("Edg")) return "Edge";
+    return "Other";
 }
 
 function logMicroInteraction(type, label, metadata = {}) {
+    const logEntry = {
+        s: currentSessionId,
+        q: `[${type}] ${label}`,
+        i: `${type}:${label}`,
+        d: new Date().toISOString(),
+        t: 'interaction',
+        m: metadata,
+        device: navigator.userAgent,
+        deviceType: /Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(navigator.userAgent) ? 'mobile' : /(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(navigator.userAgent) ? 'tablet' : 'desktop',
+        browserName: getBrowserName(),
+        os: getOS(),
+        city: userLocation.city,
+        country: userLocation.country
+    };
+
     try {
         const logs = JSON.parse(localStorage.getItem('rvce_standalone_logs') || '[]');
-        logs.push({
-            s: currentSessionId,
-            q: `[${type}] ${label}`,
-            i: `${type}:${label}`,
-            d: new Date().toISOString(),
-            t: 'interaction',
-            m: metadata
-        });
+        logs.push(logEntry);
         if (logs.length > 2000) logs.shift();
         localStorage.setItem('rvce_standalone_logs', JSON.stringify(logs));
     } catch(e) { console.warn("Micro-interaction logging failed", e); }
+
+    // Cloud logging
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.protocol === 'file:') 
+        ? 'http://localhost:5000/api/logs' 
+        : '/api/logs';
+    try {
+        fetch(API_BASE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(logEntry)
+        }).catch(e => console.warn("Cloud micro-logging failed", e));
+    } catch(e) { /* silent fail */ }
 }
 
 let isProcessing = false;
@@ -3191,6 +4225,9 @@ function process(rawText) {
 
     // Classify the intent with confidence detection
     const result = classifyIntent(text);
+    if (result && typeof SESSION !== 'undefined') {
+        SESSION.reqYear = result.year || null;
+    }
 
     // === MULTI-INTENT HANDLING ===
     if (result.type === 'multi') {
@@ -3421,18 +4458,20 @@ function renderDepartment(d) {
     if (!d) return { text: T("I couldn't find details for that department. Please try again or check the main menu. 📋", "I couldn't find details for that department. Please try again or check the main menu."), buttons: [{l:'Main Menu',a:'menu',i:'📋'}] };
     const r = { text: '', buttons: [], noMenu: false };
     const hod = d.hod || "Faculty Leadership";
+    let extraInfo = '';
+    if (d.intake) extraInfo += `\n🎓 Intake: ${d.intake}`;
+    if (d.accreditation) extraInfo += `\n💎 Accreditation: ${d.accreditation}`;
+    
     r.text = T(
-        `**${d.n}** 🎯\n👨‍🏫 HOD: ${hod}\n\n*${d.info || "Explore the options below to learn more about this department."}*`,
-        `Department: ${d.n}\nHead of Department: ${hod}\n\n${d.info || ""}`
+        `**${d.n}** 🎯\n👨‍🏫 HOD: ${hod}${extraInfo}\n\n*${d.info || "Explore the options below to learn more about this department."}*`,
+        `Department: ${d.n}\nHead of Department: ${hod}${extraInfo}\n\n${d.info || ""}`
     );
     r.buttons = [{l:'Main Page',u:d.u,i:'🌐'}];
     if (d.about) r.buttons.push({l:'About Dept',u:d.about,i:'ℹ️'});
-    if (d.syllabus) r.buttons.push({l:'Syllabus',u:d.syllabus,i:'📚'});
-    if (d.faculty) r.buttons.push({l:'Faculty',u:d.faculty,i:'👨‍🏫'});
     if (d.placement) r.buttons.push({l:'Placements',u:d.placement,i:'💼'});
-    if (d.collab) r.buttons.push({l:'Collaborations',u:d.collab,i:'🤝'});
-    if (d.labs) r.buttons.push({l:'Labs/Facilities',u:d.labs,i:'🧪'});
     r.buttons.push({l:'All Departments',a:'departments',i:'🔙'});
+    r.buttons.push({l:'More Options 🔽',a:'more_dept_'+d.c,i:'➕'});
+    r.noMenu = true;
     return r;
 }
 
@@ -3539,7 +4578,7 @@ function addBot(text, buttons, noMenu) {
     });
     fmt = fmt.replace(/\n/g,'<br>');
     
-    m.innerHTML=`<div class="msg-av"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div class="msg-body"><div class="msg-bubble">${fmt}</div>${bh}</div>`;
+    m.innerHTML=`<div class="msg-av"><img src="rvce_logo.png" alt="RVCE Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 5px; background-color: #fff; padding: 1px;"></div><div class="msg-body"><div class="msg-bubble">${fmt}</div>${bh}</div>`;
     msgs.appendChild(m);
     
     m.querySelectorAll('.act-btn[data-action]').forEach(b=>b.addEventListener('click',()=>{disOld();handleAction(b.dataset.action);}));
@@ -3548,7 +4587,7 @@ function addBot(text, buttons, noMenu) {
 
 function addBotWarn(text) {
     const m=document.createElement('div'); m.className='message bot';
-    m.innerHTML=`<div class="msg-av"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div class="msg-body"><div class="msg-bubble warn">${text.replace(/\n/g,'<br>')}</div><div class="msg-btns"><button class="act-btn mn" data-action="menu">📋 Main Menu</button></div></div>`;
+    m.innerHTML=`<div class="msg-av"><img src="rvce_logo.png" alt="RVCE Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 5px; background-color: #fff; padding: 1px;"></div><div class="msg-body"><div class="msg-bubble warn">${text.replace(/\n/g,'<br>')}</div><div class="msg-btns"><button class="act-btn mn" data-action="menu">📋 Main Menu</button></div></div>`;
     msgs.appendChild(m);
     m.querySelectorAll('.act-btn[data-action]').forEach(b=>b.addEventListener('click',()=>{disOld();handleAction(b.dataset.action);}));
     scr();

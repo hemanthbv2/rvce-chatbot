@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RVCE Chatbot — 500 Questions QA Testing Suite</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg: #0f172a;
@@ -20,7 +23,12 @@
             --muted: #94a3b8;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
         body {
             background-color: var(--bg);
@@ -83,14 +91,20 @@
             color: #fff;
             box-shadow: 0 4px 15px var(--primary-glow);
         }
-        .btn-primary:hover { background: #4f46e5; }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text);
             border: 1px solid var(--border);
         }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
         /* Progress Stats Bar */
         .stats-bar {
@@ -109,12 +123,33 @@
             flex-direction: column;
         }
 
-        .stat-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
-        .stat-value { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; }
-        .stat-card.correct .stat-value { color: var(--green); }
-        .stat-card.wrong .stat-value { color: var(--red); }
-        .stat-card.fallback .stat-value { color: var(--yellow); }
-        .stat-card.total .stat-value { color: var(--primary); }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-card.correct .stat-value {
+            color: var(--green);
+        }
+
+        .stat-card.wrong .stat-value {
+            color: var(--red);
+        }
+
+        .stat-card.fallback .stat-value {
+            color: var(--yellow);
+        }
+
+        .stat-card.total .stat-value {
+            color: var(--primary);
+        }
 
         /* Search & Controls */
         .controls {
@@ -163,7 +198,9 @@
             transition: all 0.2s ease;
         }
 
-        .q-card:hover { border-color: rgba(255, 255, 255, 0.2); }
+        .q-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
 
         .q-num {
             font-size: 0.8rem;
@@ -194,7 +231,11 @@
             font-size: 0.75rem;
             cursor: pointer;
         }
-        .btn-copy:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+
+        .btn-copy:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
 
         /* Option Radio Pills */
         .options {
@@ -214,19 +255,22 @@
             transition: all 0.2s ease;
         }
 
-        .opt-btn.correct:hover, .opt-btn.correct.active {
+        .opt-btn.correct:hover,
+        .opt-btn.correct.active {
             background: rgba(16, 185, 129, 0.2);
             color: var(--green);
             border-color: var(--green);
         }
 
-        .opt-btn.wrong:hover, .opt-btn.wrong.active {
+        .opt-btn.wrong:hover,
+        .opt-btn.wrong.active {
             background: rgba(239, 68, 68, 0.2);
             color: var(--red);
             border-color: var(--red);
         }
 
-        .opt-btn.fallback:hover, .opt-btn.fallback.active {
+        .opt-btn.fallback:hover,
+        .opt-btn.fallback.active {
             background: rgba(245, 158, 11, 0.2);
             color: var(--yellow);
             border-color: var(--yellow);
@@ -249,9 +293,14 @@
             transition: all 0.3s ease;
             pointer-events: none;
         }
-        .toast.show { opacity: 1; transform: translateY(0); }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -364,7 +413,7 @@
         // Fill remaining questions up to 500 programmatically for full coverage
         const depts = ['CSE', 'ISE', 'AIML', 'ECE', 'EEE', 'Mechanical', 'Civil', 'Biotech', 'Chemical', 'Aerospace', 'EIE', 'ETE', 'IEM', 'MCA', 'CSDS', 'CSCY'];
         const types = ['placement stats 2026', 'HOD name', 'seat capacity', 'faculty list', 'cutoff ranks', 'average salary', 'highest package'];
-        while(QUESTIONS.length < 500) {
+        while (QUESTIONS.length < 500) {
             const d = depts[Math.floor(Math.random() * depts.length)];
             const t = types[Math.floor(Math.random() * types.length)];
             QUESTIONS.push(`What is ${d} ${t} in RVCE?`);
@@ -423,7 +472,7 @@
             });
         }
 
-        window.setEval = function(id, val) {
+        window.setEval = function (id, val) {
             if (evaluations[id] === val) {
                 delete evaluations[id]; // Toggle off
             } else {
@@ -433,7 +482,7 @@
             renderList();
         };
 
-        window.copyText = function(text) {
+        window.copyText = function (text) {
             navigator.clipboard.writeText(text);
             showToast('Copied query to clipboard!');
         };
@@ -488,4 +537,5 @@
         renderList();
     </script>
 </body>
+
 </html>
